@@ -1,0 +1,33 @@
+{
+  "name": "leadoc-rest-api",
+  "module": ".src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun ./src/index"
+  },
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/pg": "^8.15.4",
+    "drizzle-kit": "^0.31.1",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.20.3",
+    "winston": "^3.17.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.44.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "express-validator": "^7.2.1",
+    "pg": "^8.16.1",
+    "reflect-metadata": "^0.2.2",
+    "typedi": "^0.10.0"
+  }
+}
