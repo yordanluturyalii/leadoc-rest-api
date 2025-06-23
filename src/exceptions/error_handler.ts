@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from "express"
+import { logger } from "../utils/logger.utils"
 
 interface AppError extends Error {
     status?: number
@@ -10,7 +11,9 @@ export const errorHandler = (
     res: Response,
     next: NextFunction
 ) => {
+    logger.error('Error: %O', err);
     res.send({
-        message: err.message
+        message: err.message,
+        stack: err.stack
     })
 }
