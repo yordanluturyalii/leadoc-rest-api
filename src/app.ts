@@ -1,4 +1,4 @@
-import express from "express"
+import express from "express";
 import { errorHandler } from "./exceptions/error_handler";
 import cors from "cors";
 import { limiter } from "./utils/rate-limiting.utils";
@@ -14,14 +14,16 @@ const app = express();
 app.use(cors());
 app.use(limiter);
 app.use(express.json());
-app.use(session({
+app.use(
+  session({
     secret: config.jwtSecret,
     resave: false,
-    saveUninitialized: true
-}));
+    saveUninitialized: true,
+  }),
+);
 app.use(passport.session());
 
 app.use("/api", authRoutes);
 
 app.use(errorHandler);
-export { app }
+export { app };

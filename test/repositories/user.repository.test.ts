@@ -60,7 +60,7 @@ describe("User Repository", () => {
       mockUserData.name,
       mockUserData.username,
       mockUserData.github_id,
-      mockUserData.profile_picture
+      mockUserData.profile_picture,
     );
 
     expect(insertMock).toHaveBeenCalledWith(users);
@@ -110,7 +110,8 @@ describe("User Repository", () => {
     const insertMock = vi.mocked(db.insert);
     const valuesMock = insertMock().values;
 
-    const duplicateError = new Error(`Failed query: insert into "users" ("id", "name", "username", "profile_picture", "github_id") values (default, $1, $2, $3, $4) 
+    const duplicateError =
+      new Error(`Failed query: insert into "users" ("id", "name", "username", "profile_picture", "github_id") values (default, $1, $2, $3, $4) 
 params: budi,budii,budi.jpg,1234`);
 
     valuesMock.mockRejectedValue(duplicateError);
@@ -120,9 +121,10 @@ params: budi,budii,budi.jpg,1234`);
         mockUserData.name,
         mockUserData.username,
         mockUserData.github_id,
-        mockUserData.profile_picture
-      )
-    ).rejects.toThrow(`Failed query: insert into "users" ("id", "name", "username", "profile_picture", "github_id") values (default, $1, $2, $3, $4) 
+        mockUserData.profile_picture,
+      ),
+    ).rejects
+      .toThrow(`Failed query: insert into "users" ("id", "name", "username", "profile_picture", "github_id") values (default, $1, $2, $3, $4) 
 params: budi,budii,budi.jpg,1234`);
 
     expect(insertMock).toHaveBeenCalledWith(users);
@@ -145,8 +147,8 @@ params: budi,budii,budi.jpg,1234`);
         mockUserData.name,
         mockUserData.username,
         mockUserData.github_id,
-        mockUserData.profile_picture
-      )
+        mockUserData.profile_picture,
+      ),
     ).rejects.toThrow("Database connection failed");
   });
 });

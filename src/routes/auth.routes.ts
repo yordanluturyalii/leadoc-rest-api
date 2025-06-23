@@ -6,15 +6,19 @@ import { Router, type Request, type Response } from "express";
 
 setupDI();
 const authRoutes = Router();
-const authController = Container.get(AuthController)
+const authController = Container.get(AuthController);
 
-authRoutes.get('/auth', passport.authenticate('github', { scope: ['user', 'repo'] }));
+authRoutes.get(
+  "/auth",
+  passport.authenticate("github", { scope: ["user", "repo"] }),
+);
 
-authRoutes.get('/auth/callback',
-    passport.authenticate('github'),
-    (req: Request, res: Response) => {
-        authController.authorize(req, res);
-    }
+authRoutes.get(
+  "/auth/callback",
+  passport.authenticate("github"),
+  (req: Request, res: Response) => {
+    authController.authorize(req, res);
+  },
 );
 
 export default authRoutes;
