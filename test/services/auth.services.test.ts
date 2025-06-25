@@ -29,7 +29,7 @@ vi.mock("../../src/utils/logger.utils", () => ({
 vi.mock("typedi", () => ({
   Service: () => (target: any) => target,
   Inject:
-    () => (target: any, propertyKey: string, parameterIndex: number) => {},
+    () => (target: any, propertyKey: string, parameterIndex: number) => { },
   Container: {
     get: vi.fn(),
   },
@@ -158,4 +158,67 @@ describe("AuthServices", () => {
       expect(result).toBe(expectedToken);
     });
   });
+
+  it("should create new user and return detail user and JWT token", async () => {
+    const expectedToken = "jwt-token-456";
+
+    const input = {
+      name: "budi",
+      email: "budi@gmail.coom",
+      password: "Budi1234",
+      passwordConfirmation: "Budi1234"
+    };
+
+    jwtSignSpy.mockReturnValue(expectedToken);
+
+    mockUserRepository.create(undefined);
+
+    const result = await authServices.register(input.name, input.email, input.password, input.passwordConfirmation);
+    expect(jwtSignSpy).toHaveBeenCalledWith(
+      {
+        "email": "budi@gmail.coom",
+        "name": "budi",
+        "password": "Budi1234",
+      },
+      "test-secret-key",
+      {
+        "expiresIn": "7d",
+      },
+    );
+
+    expect(result).toEqual({
+      user: {
+        name: input.name,
+        email: input.email
+      },
+      token: expectedToken
+    })
+  })
+
+  it("should return error when password and confirmation do not match", async () => {
+    const result = await authServices.register(
+      "Jane",
+      "jane@example.com",
+      "1234",
+      "4321"
+    );
+
+    expect(result).toBeInstanceOf(Error);
+    expect(result?.message).toBe("The password confirmation does not match.");
+  })
+
+  it("should catch unexpected errors and log them", async () => {
+    mockUserRepository.create.mockRejectedValueOnce(new Error("DB error"));
+
+    const result = await authServices.register(
+      "Joe",
+      "joe@example.com",
+      "123456",
+      "123456"
+    );
+
+    expect(result).toBeInstanceOf(Error);
+    expect(result?.message).toBe("DB error");
+    expect(logger.error).toHaveBeenCalledWith("Error: %o", expect.any(Error));
+  })
 });
