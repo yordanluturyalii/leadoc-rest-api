@@ -8,6 +8,7 @@ import { User } from "../db/models/user.model";
 export class UserRepository {
   async create(
     name: string,
+    email?: string,
     username?: string,
     github_id?: string,
     profile_picture?: string,
@@ -17,6 +18,7 @@ export class UserRepository {
     try {
       await db.insert(users).values({
         name,
+        email
         username,
         github_id,
         profile_picture,
