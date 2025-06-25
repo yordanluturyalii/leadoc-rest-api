@@ -8,7 +8,7 @@ import { User } from "../db/models/user.model";
 export class UserRepository {
   async create(
     name: string,
-    username: string,
+    username?: string,
     github_id?: string,
     profile_picture?: string,
     password?: string,
