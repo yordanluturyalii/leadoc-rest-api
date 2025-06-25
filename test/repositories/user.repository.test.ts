@@ -58,17 +58,23 @@ describe("User Repository", () => {
 
     const result = await userRepository.create(
       mockUserData.name,
+      undefined,
       mockUserData.username,
       mockUserData.github_id,
       mockUserData.profile_picture,
+      undefined,
+      undefined
     );
 
     expect(insertMock).toHaveBeenCalledWith(users);
     expect(valuesMock).toHaveBeenCalledWith({
       name: mockUserData.name,
+      email: undefined,
       username: mockUserData.username,
       github_id: mockUserData.github_id,
       profile_picture: mockUserData.profile_picture,
+      password: undefined,
+      accessToken: undefined
     });
     expect(result).toBeUndefined();
   });
@@ -119,9 +125,11 @@ params: budi,budii,budi.jpg,1234`);
     await expect(
       userRepository.create(
         mockUserData.name,
+        undefined,
         mockUserData.username,
         mockUserData.github_id,
         mockUserData.profile_picture,
+        undefined
       ),
     ).rejects
       .toThrow(`Failed query: insert into "users" ("id", "name", "username", "profile_picture", "github_id") values (default, $1, $2, $3, $4) 
