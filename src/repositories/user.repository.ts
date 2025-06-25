@@ -36,9 +36,12 @@ export class UserRepository {
       ? new User(
           user[0]?.id,
           user[0]?.name,
+          user[0]?.email,
           user[0]?.username,
           user[0]?.profile_picture,
           user[0]?.github_id,
+          user[0]?.password,
+          user[0].accessToken
         )
       : null;
   }
