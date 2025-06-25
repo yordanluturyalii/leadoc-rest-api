@@ -3,6 +3,7 @@ import type { UserRepository } from "../repositories/user.repository";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 import { logger } from "../utils/logger.utils";
+import { log } from "winston";
 
 @Service()
 export class AuthServices {
@@ -38,6 +39,31 @@ export class AuthServices {
       );
 
       return token;
+    } catch (error) {
+      logger.error("Error: %o", error);
+      return error;
+    }
+  }
+
+  async register(name: string, email: string, password: string, passwordConfirmation: string) {
+    try {
+      if (password !== passwordConfirmation) throw new Error("The password confirmation does not match.");
+
+      const token = jwt.sign(
+        {
+          name, email, password
+        },
+        config.jwtSecret,
+        { expiresIn: "7d" },
+      );
+
+      const user = await this.userRepository.create(name, email, undefined, undefined, undefined, password, undefined);
+      return {
+        user: {
+          name, email
+        },
+        token
+      }
     } catch (error) {
       logger.error("Error: %o", error);
       return error;
