@@ -18,7 +18,7 @@ export class UserRepository {
     try {
       await db.insert(users).values({
         name,
-        email
+        email,
         username,
         github_id,
         profile_picture,
