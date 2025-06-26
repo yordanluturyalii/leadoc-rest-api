@@ -159,4 +159,34 @@ params: budi,budii,budi.jpg,1234`);
       ),
     ).rejects.toThrow("Database connection failed");
   });
+
+  it("should find user by email and return email successfully", async() => {
+    const mockDataUser = {
+      id: undefined,
+      name: undefined,
+      email: "yanto@gmail.com",
+      username: undefined,
+      github_id: undefined,
+      profile_picture: undefined,
+      password: undefined,
+      accessToken: undefined
+    } 
+    
+    const selectMock = vi.mocked(db.select);
+    const fromMock = selectMock().from;
+    const whereMock = fromMock().where;
+
+    whereMock.mockResolvedValue([mockDataUser]);
+
+    const result = await userRepository.findByEmail("yanto@gmail.com");
+
+    expect(selectMock).toHaveBeenCalled();
+    expect(fromMock).toHaveBeenCalled();
+    expect(whereMock).toHaveBeenCalled();
+
+    expect(result).toBeInstanceOf(User);
+    expect(result?.id).toBeUndefined();
+    expect(result?.name).toBeUndefined;
+    expect(result?.email).toBe(mockDataUser.email);
+  })
 });
