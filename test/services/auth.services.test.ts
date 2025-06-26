@@ -6,6 +6,7 @@ import { User } from "../../src/db/models/user.model";
 const mockUserRepository = {
   findByGithubId: vi.fn(),
   create: vi.fn(),
+  findByEmail: vi.fn()
 };
 
 vi.mock("jsonwebtoken", () => ({
@@ -206,6 +207,34 @@ describe("AuthServices", () => {
     expect(result).toBeInstanceOf(Error);
     expect(result?.message).toBe("The password confirmation does not match.");
   })
+
+  it("should return error when email already taken", async () => {
+    const input = {
+      name: "budi",
+      email: "budi@gmail.com",
+      password: "Budi1234",
+      passwordConfirmation: "Budi1234",
+    };
+
+    // Simulasikan bahwa email sudah terdaftar
+    mockUserRepository.findByEmail = vi.fn().mockResolvedValueOnce({
+      id: "user-1",
+      name: input.name,
+      email: input.email,
+    });
+
+    const result = await authServices.register(
+      input.name,
+      input.email,
+      input.password,
+      input.passwordConfirmation
+    );
+
+    expect(result).toBeInstanceOf(Error);
+    expect(result.message).toBe("Email already taken");
+    expect(logger.error).toHaveBeenCalledWith("Error: %o", expect.any(Error));
+  });
+
 
   it("should catch unexpected errors and log them", async () => {
     mockUserRepository.create.mockRejectedValueOnce(new Error("DB error"));
