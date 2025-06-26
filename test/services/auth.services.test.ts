@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthServices } from "../../src/services/auth.services";
 import type { UserRepository } from "../../src/repositories/user.repository";
 import { User } from "../../src/db/models/user.model";
+import bcrypt from "bcrypt";
 
 const mockUserRepository = {
   findByGithubId: vi.fn(),
@@ -35,6 +36,13 @@ vi.mock("typedi", () => ({
     get: vi.fn(),
   },
 }));
+
+vi.mock("bcrypt", () => ({
+  default: {
+    hash: vi.fn(),
+  },
+}));
+
 
 import jwt from "jsonwebtoken";
 import { logger } from "../../src/utils/logger.utils";
@@ -162,38 +170,68 @@ describe("AuthServices", () => {
 
   it("should create new user and return detail user and JWT token", async () => {
     const expectedToken = "jwt-token-456";
+    const hashedPassword = "hashed-budi1234";
 
     const input = {
       name: "budi",
-      email: "budi@gmail.coom",
+      email: "budi@gmail.com",
       password: "Budi1234",
-      passwordConfirmation: "Budi1234"
+      passwordConfirmation: "Budi1234",
     };
 
+    // Simulasi tidak ada user dengan email tsb
+    mockUserRepository.findByEmail.mockResolvedValueOnce(null);
+
+    // Simulasi hash password
+    vi.mocked(bcrypt.hash).mockResolvedValueOnce(hashedPassword);
+
+    // Simulasi token
     jwtSignSpy.mockReturnValue(expectedToken);
 
-    mockUserRepository.create(undefined);
+    // Simulasi user berhasil disimpan
+    mockUserRepository.create.mockResolvedValueOnce({
+      id: "user-999",
+      name: input.name,
+      email: input.email,
+    });
 
-    const result = await authServices.register(input.name, input.email, input.password, input.passwordConfirmation);
+    const result = await authServices.register(
+      input.name,
+      input.email,
+      input.password,
+      input.passwordConfirmation
+    );
+
+    expect(bcrypt.hash).toHaveBeenCalledWith(input.password, 10);
+
     expect(jwtSignSpy).toHaveBeenCalledWith(
       {
-        "email": "budi@gmail.coom",
-        "name": "budi",
-        "password": "Budi1234",
+        name: input.name,
+        email: input.email,
+        hashPassword: hashedPassword,
       },
       "test-secret-key",
-      {
-        "expiresIn": "7d",
-      },
+      { expiresIn: "7d" }
+    );
+
+    expect(mockUserRepository.create).toHaveBeenCalledWith(
+      input.name,
+      input.email,
+      undefined,
+      undefined,
+      undefined,
+      hashedPassword,
+      undefined
     );
 
     expect(result).toEqual({
       user: {
         name: input.name,
-        email: input.email
+        email: input.email,
       },
-      token: expectedToken
-    })
+      token: expectedToken,
+    });
+
   })
 
   it("should return error when password and confirmation do not match", async () => {
