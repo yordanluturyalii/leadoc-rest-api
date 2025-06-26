@@ -1,16 +1,28 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { AuthServices } from "../../src/services/auth.services";
 import { AuthController } from "../../src/controllers/auth.controllers";
+import { validationResult } from "express-validator";
+import { successResponse } from "../../src/utils/response.utils";
 
 const mockAuthorize = vi.fn();
+const mockRegister = vi.fn();
 const mockAuthService: Partial<AuthServices> = {
   authorize: mockAuthorize,
+  register: mockRegister
 };
 
 const mockRes = {
   status: vi.fn(() => mockRes),
   json: vi.fn(),
 };
+
+vi.mock(import("express-validator"), async (importOriginal) => {
+  const mod = await importOriginal()
+  return {
+    ...mod,
+    validationResult: vi.fn()
+  }
+});
 
 describe("AuthController - authorize", () => {
   let controller: AuthController;
@@ -86,4 +98,45 @@ describe("AuthController - authorize", () => {
       },
     });
   });
+
+  it("should return 200 and user data if register is succesfull", async () => {
+    const mockResult = {
+      user: {
+        name: "budi",
+        email: "budi@gmail.com",
+      },
+      token: "jwt-token-123",
+    };
+
+    vi.mocked(validationResult).mockReturnValue({
+      isEmpty: () => true,
+    } as any);
+
+    mockRegister.mockResolvedValueOnce(mockResult);
+
+    const mockReq: any = {
+      body: {
+        name: "budi",
+        email: "budi@gmail.com",
+        password: "Budi1234",
+        password_confirmation: "Budi1234",
+      }
+    };
+
+    await controller.register(mockReq as any, mockRes as any);
+
+    expect(mockRegister).toHaveBeenCalledWith(
+      "budi",
+      "budi@gmail.com",
+      "Budi1234",
+      "Budi1234"
+    );
+
+    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.json).toHaveBeenCalledWith({
+      message: "Success Create Account",
+      data: mockResult,
+      error: null,
+    })
+  })
 });
