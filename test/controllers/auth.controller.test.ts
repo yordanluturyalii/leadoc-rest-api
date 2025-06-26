@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { AuthServices } from "../../src/services/auth.services";
 import { AuthController } from "../../src/controllers/auth.controllers";
 import { validationResult } from "express-validator";
-import { successResponse } from "../../src/utils/response.utils";
+import { successResponse, validationErrorResponse } from "../../src/utils/response.utils";
 
 const mockAuthorize = vi.fn();
 const mockRegister = vi.fn();
@@ -15,6 +15,14 @@ const mockRes = {
   status: vi.fn(() => mockRes),
   json: vi.fn(),
 };
+
+vi.mock(import ("../../src/utils/response.utils"), async (importOriginal) => {
+  const mod = await importOriginal();
+  return {
+    ...mod,
+    validationErrorResponse: vi.fn()
+  }
+});
 
 vi.mock(import("express-validator"), async (importOriginal) => {
   const mod = await importOriginal()
@@ -139,4 +147,37 @@ describe("AuthController - authorize", () => {
       error: null,
     })
   })
+
+  it("should return 422 when validation fails", async () => {
+    vi.mocked(validationResult).mockReturnValue({
+      isEmpty: () => false,
+      array: () => [
+        { type: "field", msg: "Invalid Email" },
+        { type: "field", msg: "Password confirmation is required" },
+      ],
+    } as any);
+
+    const mockReq: any = {
+      body: {
+        name: "budi",
+        email: "invalid-email",
+        password: "",
+        password_confirmation: "not-matching",
+      },
+    };
+
+    await controller.register(mockReq, mockRes);
+
+    expect(validationErrorResponse).toHaveBeenCalledWith(
+      mockRes,
+      "Invalid Request Body",
+      [
+        { type: "field", message: "Invalid Email" },
+        { type: "field", message: "Password confirmation is required" },
+      ],
+      422
+    );
+
+    expect(mockRegister).not.toHaveBeenCalled();
+  });
 });
