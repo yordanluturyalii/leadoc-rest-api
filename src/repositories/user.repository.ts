@@ -58,6 +58,6 @@ export class UserRepository {
         undefined,
         undefined,
         undefined
-      )
+      ) : null
   }
 }
