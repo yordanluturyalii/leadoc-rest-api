@@ -132,7 +132,7 @@ describe("AuthController - authorize", () => {
       "Budi1234"
     );
 
-    expect(mockRes.status).toHaveBeenCalledWith(200);
+    expect(mockRes.status).toHaveBeenCalledWith(201);
     expect(mockRes.json).toHaveBeenCalledWith({
       message: "Success Create Account",
       data: mockResult,
