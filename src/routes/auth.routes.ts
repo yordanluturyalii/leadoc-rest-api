@@ -3,6 +3,7 @@ import setupDI from "../utils/di.utils";
 import passport from "passport";
 import { AuthController } from "../controllers/auth.controllers";
 import { Router, type Request, type Response } from "express";
+import { registerValidator } from "../validations/register.validation";
 
 setupDI();
 const authRoutes = Router();
@@ -20,5 +21,7 @@ authRoutes.get(
     authController.authorize(req, res);
   },
 );
+
+authRoutes.post("/auth/register", registerValidator, (req: Request, res: Response) => authController.register(req, res));
 
 export default authRoutes;
