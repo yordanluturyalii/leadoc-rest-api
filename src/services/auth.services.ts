@@ -47,6 +47,8 @@ export class AuthServices {
 
   async register(name: string, email: string, password: string, passwordConfirmation: string) {
     try {
+      const existingUser = await this.userRepository.findByEmail(email);
+      if (existingUser) throw new Error("Email already taken");
       if (password !== passwordConfirmation) throw new Error("The password confirmation does not match.");
 
       const token = jwt.sign(
