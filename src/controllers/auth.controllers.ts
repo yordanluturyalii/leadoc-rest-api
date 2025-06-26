@@ -49,7 +49,7 @@ export class AuthController {
       const passwordConfirmation = req.body.password_confirmation;
 
       const user = await this.authService.register(name, email, password, passwordConfirmation);
-      successResponse(res, "Success Create Account", user);
+      successResponse(res, "Success Create Account", user, 201);
     } catch (error) {
       errorResponse(res, "Failed To Create Account", error);
     }
