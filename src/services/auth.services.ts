@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 import { logger } from "../utils/logger.utils";
 import { log } from "winston";
+import bcrypt from "bcrypt";
 
 @Service()
 export class AuthServices {
@@ -51,15 +52,17 @@ export class AuthServices {
       if (existingUser) throw new Error("Email already taken");
       if (password !== passwordConfirmation) throw new Error("The password confirmation does not match.");
 
+      const hashPassword = await bcrypt.hash(password, 10);
+
       const token = jwt.sign(
         {
-          name, email, password
+          name, email, hashPassword
         },
         config.jwtSecret,
         { expiresIn: "7d" },
       );
 
-      const user = await this.userRepository.create(name, email, undefined, undefined, undefined, password, undefined);
+      const user = await this.userRepository.create(name, email, undefined, undefined, undefined, hashPassword, undefined);
       return {
         user: {
           name, email
