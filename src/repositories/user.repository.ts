@@ -47,16 +47,16 @@ export class UserRepository {
   }
 
   async findByEmail(email: string) {
-    const user = await db.select({email: users.email}).from(users).where(eq(users.email, email));
+    const user = await db.select({email: users.email, username:users.username, password:users.password, name:users.name}).from(users).where(eq(users.email, email));
     return user[0] 
       ? new User(
         undefined,
-        undefined, 
+        user[0]?.name, 
         user[0]?.email,
+        user[0]?.username,
         undefined,
         undefined,
-        undefined,
-        undefined,
+        user[0].password,
         undefined
       ) : null
   }

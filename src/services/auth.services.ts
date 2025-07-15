@@ -3,8 +3,9 @@ import type { UserRepository } from "../repositories/user.repository";
 import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 import { logger } from "../utils/logger.utils";
-import { log } from "winston";
 import bcrypt from "bcrypt";
+import { response } from "express";
+
 
 @Service()
 export class AuthServices {
@@ -13,33 +14,24 @@ export class AuthServices {
   ) {}
   async authorize(
     githubId: string,
-    username: string,
     accessToken: string,
     name: string,
-    profile_picture: string,
+    email?: string,
+    profile_picture?: string,
+    username?: string,
   ) {
     try {
       const user = await this.userRepository.findByGithubId(githubId);
       if (user === null)
         await this.userRepository.create(
           name,
+          email,
           username,
           githubId,
           profile_picture,
           undefined,
           accessToken,
         );
-      const token = jwt.sign(
-        {
-          githubId,
-          username,
-          accessToken,
-        },
-        config.jwtSecret,
-        { expiresIn: "7d" },
-      );
-
-      return token;
     } catch (error) {
       logger.error("Error: %o", error);
       return error;
@@ -70,6 +62,44 @@ export class AuthServices {
         token
       }
     } catch (error) {
+      logger.error("Error: %o", error);
+      return error;
+    }
+  }
+
+  async login(email: string,password: string, res:Response) {
+    try{
+      const existingEmail = await this.userRepository.findByEmail(email)
+      if (!existingEmail) throw new Error("Account not found. Please check your email and password or create a new one.");
+
+      const isMatch = await bcrypt.compare(password, existingEmail.password)
+      if (!isMatch) throw new Error("Password Incorrect");
+      
+      const token = jwt.sign(
+        {
+          name: existingEmail.name,
+          username: existingEmail.username,
+          email: existingEmail.email,
+          password: existingEmail.password
+        },
+        config.jwtSecret,
+        { expiresIn: "7d" },
+      );
+      
+      res.cookie("token", token, {
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      });
+      
+      return {
+        user:{
+          username: existingEmail.username,
+          email: existingEmail.email
+        },
+        token: token
+      }
+
+
+    }catch(error){
       logger.error("Error: %o", error);
       return error;
     }

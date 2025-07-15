@@ -10,6 +10,8 @@ interface Config {
   githubSecretId: string;
   githubCallbackUrl: string;
   jwtSecret: string;
+  appEnvironment: string;
+  frontendUrl: string;
 }
 
 export const config: Config = {
@@ -21,4 +23,6 @@ export const config: Config = {
   githubSecretId: process.env.GITHUB_SECRET_ID || "",
   githubCallbackUrl: process.env.GITHUB_CALLBACK_URL || "",
   jwtSecret: process.env.JWT_SECRET || "",
+  appEnvironment: process.env.APP_ENV || "",
+  frontendUrl: process.env.FRONTEND_URL || ""
 };

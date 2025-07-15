@@ -4,6 +4,7 @@ import passport from "passport";
 import { AuthController } from "../controllers/auth.controllers";
 import { Router, type Request, type Response } from "express";
 import { registerValidator } from "../validations/register.validation";
+import { loginValidator } from "../validations/login.validation";
 
 setupDI();
 const authRoutes = Router();
@@ -23,5 +24,6 @@ authRoutes.get(
 );
 
 authRoutes.post("/auth/register", registerValidator, (req: Request, res: Response) => authController.register(req, res));
+authRoutes.post("/auth/login", loginValidator, (req: Request, res: Response) => authController.login(req, res));
 
 export default authRoutes;
