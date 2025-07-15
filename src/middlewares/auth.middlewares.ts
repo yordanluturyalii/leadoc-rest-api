@@ -2,7 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { logger } from "../utils/logger.utils";
 import { errorResponse } from "../utils/response.utils";
 import jwt from "jsonwebtoken"
-import type { config } from "../config/config";
+import { config } from "../config/config";
 
 export default function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const token = req?.cookies?.token;
