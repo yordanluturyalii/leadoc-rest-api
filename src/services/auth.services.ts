@@ -70,7 +70,7 @@ export class AuthServices {
   async login(email: string,password: string, res:Response) {
     try{
       const existingEmail = await this.userRepository.findByEmail(email)
-      if (!existingEmail) throw new Error("This email must be in the correct format and linked to an existing user.");
+      if (!existingEmail) throw new Error("Account not found. Please check your email and password or create a new one.");
 
       const isMatch = await bcrypt.compare(password, existingEmail.password)
       if (!isMatch) throw new Error("Password Incorrect");
