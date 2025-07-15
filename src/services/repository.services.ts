@@ -5,10 +5,19 @@ import type { UserRepository } from "../repositories/user.repository";
 export class RepositoryServices {
   constructor(@Inject() private userRepository: UserRepository){}
 
-  async getAccessToken(userId: string) {
+  async getAccessToken(userId?: string, githubId?: string) {
     try {
+      let token;
+
       const user = await this.userRepository.findById(userId);
-      return user?.accessToken;
+      if (user) {
+        token = user?.accessToken;
+      } else {
+        const githubUser = await this.userRepository.findByGithubId(githubId);
+        token = githubUser?.accessToken;
+      }
+
+      return token;
     } catch (error) {
       return error;
     }
