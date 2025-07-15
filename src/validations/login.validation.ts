@@ -12,8 +12,6 @@ export const loginValidator = [
         const existingEmail = await userRepository.findByEmail(value);
         if (!existingEmail) throw new Error("This email must be in the correct format and linked to an existing user.");
     }),
-    body("password_confirmation", "Password confirmation is required").not().isEmpty(),
-    body('password_confirmation', 'The minimum password confirmation length is 8').isLength({ min: 8 }),
     body('password', 'The minimum password length is 8').isLength({ min: 8 }),
     body('password', 'Password is required').not().isEmpty(),
     body("password").custom(async (value, {req}) => {
