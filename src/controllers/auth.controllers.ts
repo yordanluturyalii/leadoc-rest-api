@@ -54,4 +54,25 @@ export class AuthController {
       errorResponse(res, "Failed To Create Account", error);
     }
   }
+
+  async login(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const formattedErrors = errors.array().map(err => ({
+          type: err.type,
+          message: err.msg
+        }));
+        return validationErrorResponse(res, "Invalid Request Body", formattedErrors, 422);
+      }
+
+      const email = req.body.email;
+      const password = req.body.password;
+
+      const user = await this.authService.login(email, password, res);
+      successResponse(res, "Success Login", user, 200);
+    } catch (error) {
+      errorResponse(res, "Failed login", error);
+    }
+  }
 }
