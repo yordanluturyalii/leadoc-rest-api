@@ -101,20 +101,4 @@ export class AuthServices {
       return error;
     }
   }
-
-  async getMe(email: string){
-    try{
-      const user = await this.userRepository.findByEmail(email)
-
-      return {
-        user:{
-          name: user?.name,
-          email:user?.email
-        }
-      }
-    }catch(error){
-      logger.error("Error: %o", error);
-      return error;
-    }
-  }
 }
