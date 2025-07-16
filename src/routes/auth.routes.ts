@@ -27,6 +27,4 @@ authRoutes.get(
 authRoutes.post("/auth/register", registerValidator, (req: Request, res: Response) => authController.register(req, res));
 authRoutes.post("/auth/login", loginValidator, (req: Request, res: Response) => authController.login(req, res));
 
-authRoutes.get("/auth/me", authMiddleware, (req: Request, res: Response) => authController.getMe(req, res));
-
 export default authRoutes;
