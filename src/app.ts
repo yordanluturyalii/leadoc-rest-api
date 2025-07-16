@@ -5,6 +5,8 @@ import { limiter } from "./utils/rate-limiting.utils";
 import "reflect-metadata";
 import "./config/passport.config";
 import authRoutes from "./routes/auth.routes";
+import profileRoutes from "./routes/profile.routes";
+
 import session from "express-session";
 import passport from "passport";
 import { config } from "./config/config";
@@ -28,7 +30,10 @@ app.use(
 app.use(cookieParser())
 app.use(passport.session());
 
-app.use("/api", authRoutes);
+app.use("/api", [
+  authRoutes,
+  profileRoutes
+]);
 
 app.use(errorHandler);
 export { app };
