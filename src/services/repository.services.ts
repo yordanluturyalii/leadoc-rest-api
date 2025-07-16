@@ -3,7 +3,7 @@ import type { UserRepository } from "../repositories/user.repository";
 
 @Service()
 export class RepositoryServices {
-  constructor(@Inject() private userRepository: UserRepository){}
+  constructor(@Inject("UserRepository") private userRepository: UserRepository){}
 
   async getAccessToken(userId?: string, githubId?: string) {
     try {
