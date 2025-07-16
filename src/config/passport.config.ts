@@ -35,7 +35,7 @@ passport.use(
       };
       
       const authService = Container.get(AuthServices);
-      authService.authorize(user.id, user.accessToken, user.name, undefined, user?.photo_profile[0]?.value, user.username,)
+      authService.authorize(user.id, user.accessToken, user.name, undefined, user?.photo_profile[0]?.value, user.username)
 
       return done(null, user);
     },
