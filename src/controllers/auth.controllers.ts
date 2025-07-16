@@ -80,9 +80,28 @@ export class AuthController {
       const email = req.body.email;
       const password = req.body.password;
 
-      const user = await this.authService.login(email, password, res);
+
+      const user = await this.authService.login(email, password);
+      res.cookie('token', user?.token, {
+        httpOnly: true,
+        secure: config.appEnvironment === "production",
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000
+      })
+
       successResponse(res, "Success Login", user, 200);
     } catch (error) {
+      errorResponse(res, "Failed login", error);
+    }
+  }
+
+  async getMe(req: Request,res: Response){
+    try{
+      const userEmail = (req as any).user
+      const user = await this.authService.getMe(userEmail.email)
+
+      successResponse(res, "Success Get Profile User", user, 200);
+    }catch(error){
       errorResponse(res, "Failed login", error);
     }
   }

@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.routes";
 import session from "express-session";
 import passport from "passport";
 import { config } from "./config/config";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(
     saveUninitialized: true,
   }),
 );
+app.use(cookieParser())
 app.use(passport.session());
 
 app.use("/api", authRoutes);
