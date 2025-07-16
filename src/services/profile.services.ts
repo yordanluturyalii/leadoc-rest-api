@@ -1,16 +1,16 @@
 import { Inject, Service } from "typedi";
-import type { ProfileRepository } from "../repositories/profile.repository";
+import type { UserRepository } from "../repositories/user.repository";
 import { logger } from "../utils/logger.utils";
 
 @Service()
 export class ProfileServices {
   constructor(
-    @Inject("ProfileRepository") public profileRepository: ProfileRepository,
+    @Inject("UserRepository") public userRepository: UserRepository,
   ) {}
 
     async getMe(email: string){
       try{
-        const user = await this.profileRepository.findByEmail(email)
+        const user = await this.userRepository.findByEmail(email)
   
         return {
           user:{

@@ -8,6 +8,6 @@ setupDI();
 const profileRoutes = Router();
 const profileController = Container.get(ProfileController);
 
-profileRoutes.get("/auth/me", authMiddleware, (req: Request, res: Response) => profileController.getMe(req, res));
+profileRoutes.get("/user/me", authMiddleware, (req: Request, res: Response) => profileController.getMe(req, res));
 
 export default profileRoutes;
