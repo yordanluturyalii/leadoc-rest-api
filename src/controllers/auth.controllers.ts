@@ -94,15 +94,4 @@ export class AuthController {
       errorResponse(res, "Failed login", error);
     }
   }
-
-  async getMe(req: Request,res: Response){
-    try{
-      const userEmail = (req as any).user
-      const user = await this.authService.getMe(userEmail.email)
-
-      successResponse(res, "Success Get Profile User", user, 200);
-    }catch(error){
-      errorResponse(res, "Failed login", error);
-    }
-  }
 }
