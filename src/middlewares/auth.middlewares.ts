@@ -12,7 +12,7 @@ export default function authMiddleware(req: Request, res: Response, next: NextFu
 
   try {
     const user = jwt.verify(token, config.jwtSecret) as any;
-    (req as any).user;
+    (req as any).user = user;
     next()
   } catch (error) {
     logger.error("Error: %o", error);

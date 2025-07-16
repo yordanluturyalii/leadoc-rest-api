@@ -5,6 +5,7 @@ import { AuthController } from "../controllers/auth.controllers";
 import { Router, type Request, type Response } from "express";
 import { registerValidator } from "../validations/register.validation";
 import { loginValidator } from "../validations/login.validation";
+import authMiddleware from "../middlewares/auth.middlewares";
 
 setupDI();
 const authRoutes = Router();

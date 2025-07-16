@@ -80,7 +80,15 @@ export class AuthController {
       const email = req.body.email;
       const password = req.body.password;
 
-      const user = await this.authService.login(email, password, res);
+
+      const user = await this.authService.login(email, password);
+      res.cookie('token', user?.token, {
+        httpOnly: true,
+        secure: config.appEnvironment === "production",
+        sameSite: 'strict',
+        maxAge: 24 * 60 * 60 * 1000
+      })
+
       successResponse(res, "Success Login", user, 200);
     } catch (error) {
       errorResponse(res, "Failed login", error);
