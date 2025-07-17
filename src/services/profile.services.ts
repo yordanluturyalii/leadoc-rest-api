@@ -23,4 +23,10 @@ export class ProfileServices {
         return error;
       }
     } 
+
+    async deleteAccount(email: string){
+      const exist =  await this.userRepository.findByEmail(email)
+      if (!exist) throw new Error("Account not found"); 
+      await this.userRepository.delete(email)
+    }
 }
