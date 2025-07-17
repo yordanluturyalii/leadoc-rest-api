@@ -76,4 +76,12 @@ export class UserRepository {
         user[0].accessToken
     ) : null
   }
+  
+  async delete(email: string){
+    try{
+      await db.delete(users).where(eq(users.email, email));
+    }catch (error) {
+      throw error?.message;
+    }
+  }
 }
