@@ -26,7 +26,7 @@ export class ProfileController {
 
             successResponse(res, "Success delete Profile User", {}, 202);
         }catch(error){
-            errorResponse(res, "Account Not Found", error);
+            errorResponse(res, "Account Not Found", error, 404);
         }
     }
 }
