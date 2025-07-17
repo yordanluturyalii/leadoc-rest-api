@@ -2,17 +2,16 @@ import { Inject, Service } from "typedi";
 import type { UserRepository } from "../repositories/user.repository";
 import { Octokit } from "octokit";
 import { logger } from "../utils/logger.utils";
-import { name } from "drizzle-orm";
 
 @Service()
 export class RepositoryServices {
   constructor(@Inject("UserRepository") private userRepository: UserRepository){}
 
-  async getAccessToken(userId?: string, githubId?: string) {
+  async getAccessToken(email?: string, githubId?: string) {
     try {
       let token;
-
-      const user = await this.userRepository.findById(userId);
+      
+      const user = await this.userRepository.findByEmail(email);
       if (user) {
         token = user?.accessToken;
       } else {
