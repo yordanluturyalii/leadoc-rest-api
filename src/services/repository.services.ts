@@ -3,10 +3,11 @@ import type { UserRepository } from "../repositories/user.repository";
 import { Octokit } from "octokit";
 import { logger } from "../utils/logger.utils";
 import redisClient from "../config/redis.config";
+import { RepoRepository } from "../repositories/repo.repository";
 
 @Service()
 export class RepositoryServices {
-  constructor(@Inject("UserRepository") private userRepository: UserRepository){}
+  constructor(@Inject("UserRepository") private userRepository: UserRepository, @Inject("RepoRepository") private repoRepository: RepoRepository){}
 
   async getAccessToken(email?: string, githubId?: string) {
     try {
@@ -68,6 +69,8 @@ export class RepositoryServices {
             haveReadme
           }
         }));
+
+      await this.repoRepository.saveMany(userRepositories);
 
       await redisClient.setEx(`repositories:${githubId}`, 60 * 60, JSON.stringify(userRepositories));
 
