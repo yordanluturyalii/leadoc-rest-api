@@ -3,7 +3,7 @@ import { Repository } from "../db/models/repositories.model";
 import { repositories } from "../db/schema";
 
 export class RepoRepository {
-  async create(name: string, visibility: "PRIVATE" | "PUBLIC", userId: string, createdAt: Date, updatedAt: Date | null) {
+  async save(name: string, visibility: "PRIVATE" | "PUBLIC", userId: string, createdAt: Date, updatedAt: Date | null) {
     const repo = await db.insert(repositories).values({
       name, visibility, user_id: userId, created_at: createdAt, updated_at: updatedAt
     }).returning();
