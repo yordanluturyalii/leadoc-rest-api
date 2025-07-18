@@ -12,6 +12,7 @@ interface Config {
   jwtSecret: string;
   appEnvironment: string;
   frontendUrl: string;
+  redisUrl: string;
 }
 
 export const config: Config = {
@@ -24,5 +25,6 @@ export const config: Config = {
   githubCallbackUrl: process.env.GITHUB_CALLBACK_URL || "",
   jwtSecret: process.env.JWT_SECRET || "",
   appEnvironment: process.env.APP_ENV || "",
-  frontendUrl: process.env.FRONTEND_URL || ""
+  frontendUrl: process.env.FRONTEND_URL || "",
+  redisUrl: process.env.REDIS_URL || ""
 };
