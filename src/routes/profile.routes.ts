@@ -9,7 +9,7 @@ const profileRoutes = Router();
 const profileController = Container.get(ProfileController);
 
 profileRoutes.get("/user/me", authMiddleware, (req: Request, res: Response) => profileController.getMe(req, res));
-profileRoutes.post("/user/delete", authMiddleware, (req: Request, res: Response) => profileController.deleteAccount(req, res));
+profileRoutes.post("/user/delete", authMiddleware, (req: Request, res: Response) => profileController.delete(req, res));
 
 
 export default profileRoutes;

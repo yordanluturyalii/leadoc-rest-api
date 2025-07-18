@@ -19,14 +19,18 @@ export class ProfileController {
         }
     }
 
-    async deleteAccount(req: Request,res: Response){
+    async delete(req: Request,res: Response){
         try{
             const user = (req as any).user
-            await this.profileService.deleteAccount(user.email) 
+            const result = await this.profileService.delete(user.email)
 
-            successResponse(res, "Success delete Profile User", {}, 202);
+            if (!result && result != undefined){
+                errorResponse(res, "Account Not Found", {}, 404);  
+            } else {
+                successResponse(res, "Success delete Profile User", {}, 202);
+            }
         }catch(error){
-            errorResponse(res, "Account Not Found", error, 404);
+            errorResponse(res, "Account Not Found", error);
         }
     }
 }
