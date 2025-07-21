@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { db } from "../db/db";
 import { Repository } from "../db/models/repositories.model";
 import { repositories } from "../db/schema";
@@ -27,5 +28,9 @@ export class RepoRepository {
     }));
 
     await db.insert(repositories).values(values).onConflictDoNothing(); 
+  }
+
+  async getByUserId(id: string) {
+    return await db.select().from(repositories).where(eq(repositories.user_id, id);
   }
 }
