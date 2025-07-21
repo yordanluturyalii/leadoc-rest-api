@@ -67,7 +67,7 @@ export class AuthServices {
     }
   }
 
-  async login(email: string,password: string, res:Response) {
+  async login(email: string,password: string) {
     try{
       const existingEmail = await this.userRepository.findByEmail(email)
       if (!existingEmail) throw new Error("Account not found. Please check your email and password or create a new one.");
@@ -86,9 +86,6 @@ export class AuthServices {
         { expiresIn: "7d" },
       );
       
-      res.cookie("token", token, {
-        maxAge: 7 * 24 * 60 * 60 * 1000
-      });
       
       return {
         user:{
