@@ -10,6 +10,7 @@ import profileRoutes from "./routes/profile.routes";
 import session from "express-session";
 import passport from "passport";
 import { config } from "./config/config";
+import repoRoutes from "./routes/repositoy.routes";
 import cookieParser from "cookie-parser";
 
 const app = express();
@@ -29,10 +30,12 @@ app.use(
 );
 app.use(cookieParser())
 app.use(passport.session());
+app.use(cookieParser());
 
 app.use("/api", [
   authRoutes,
-  profileRoutes
+  profileRoutes,
+  repoRoutes
 ]);
 
 app.use(errorHandler);
