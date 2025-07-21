@@ -4,6 +4,8 @@ import { Octokit } from "octokit";
 import { logger } from "../utils/logger.utils";
 import redisClient from "../config/redis.config";
 import { RepoRepository } from "../repositories/repo.repository";
+import { Repository } from "../db/models/repositories.model";
+import pLimit from "p-limit";
 
 @Service()
 export class RepositoryServices {
@@ -49,8 +51,10 @@ export class RepositoryServices {
 
       const ownRepositories = repositories.filter(repo => repo.owner.login === user?.username);
 
+      const limit = pLimit(5);
+
       const userRepositories = await Promise.all( 
-        ownRepositories.map(async(item, index)=> {
+        ownRepositories.map((item) => limit(async() => {
           let haveReadme = false;
           try {
             await octokit.rest.repos.getReadme({
@@ -62,13 +66,8 @@ export class RepositoryServices {
             logger.error("Error: %o", error?.message);
           }
 
-          return {
-            id: index + 1,
-            name: item.full_name,
-            isPrivate: item.private,
-            haveReadme
-          }
-        }));
+          return new Repository(null, item.name, item.private, user?.id, haveReadme, null, null);
+        })));
 
       await this.repoRepository.saveMany(userRepositories);
 

@@ -1,0 +1,1 @@
+ALTER TABLE "repositories" ADD COLUMN "is_have_readme" boolean NOT NULL;

@@ -12,7 +12,7 @@ export class RepoRepository {
       repo[0].name,
       repo[0].visibility,
       repo[0].user_id,
-      repo[0].haveReadme
+      repo[0].haveReadme,
       repo[0].created_at,
       repo[0].updated_at
     ) : null
@@ -20,13 +20,10 @@ export class RepoRepository {
 
   async saveMany(entities: Repository[]) {
     const values = entities.map(repo => ({
-      id: repo.id,
       name: repo.name,
-      visibility: repo.visibility ? "PRIVATE" : "PUBLIC",
-      haveReadme: repo.haveReadme,
+      visibility: repo.visibility ? "PRIVATE" : "PUBLIC", 
       user_id: repo.userId,
-      created_at: repo.createdAt,
-      updatedAt: repo.updatedAt
+      haveReadme: repo.haveReadme,
     }));
 
     await db.insert(repositories).values(values).onConflictDoNothing(); 

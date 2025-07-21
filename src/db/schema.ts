@@ -21,7 +21,7 @@ export const repositories = pgTable("repositories", {
   name: varchar({ length: 255 }).notNull(),
   visibility: visibilityEnum().notNull(),
   user_id: uuid().notNull(),
-  haveReadme: boolean().notNull(),
+  is_have_readme: boolean().notNull(),
   created_at: timestamp().defaultNow(),
   updated_at: timestamp(),
 });
