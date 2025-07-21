@@ -39,15 +39,22 @@ export class RepositoryServices {
         return JSON.parse(cacheRepositories);
       }
 
+      const user = await this.userRepository.findByGithubId(githubId);
+
+      const existingRepo = await this.repoRepository.getByUserId(user?.id);
+      logger.info(existingRepo);
+      if (existingRepo.length > 0) {
+        await redisClient.setEx(`repositories:${githubId}`, 60 * 10, JSON.stringify(existingRepo));
+        return existingRepo;
+      }
+
       const octokit = new Octokit({
         auth: accessToken
       });
 
       const {data: repositories} = await octokit.rest.repos.listForAuthenticatedUser({
         per_page: 100
-      }); 
-
-      const user = await this.userRepository.findByGithubId(githubId);
+      });  
 
       const ownRepositories = repositories.filter(repo => repo.owner.login === user?.username);
 
@@ -71,7 +78,7 @@ export class RepositoryServices {
 
       await this.repoRepository.saveMany(userRepositories);
 
-      await redisClient.setEx(`repositories:${githubId}`, 60 * 60, JSON.stringify(userRepositories));
+      await redisClient.setEx(`repositories:${githubId}`, 60 * 10, JSON.stringify(userRepositories));
 
       return userRepositories;
     } catch (error) {

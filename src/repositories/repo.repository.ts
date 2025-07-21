@@ -13,7 +13,7 @@ export class RepoRepository {
       repo[0].name,
       repo[0].visibility,
       repo[0].user_id,
-      repo[0].haveReadme,
+      repo[0].is_have_readme,
       repo[0].created_at,
       repo[0].updated_at
     ) : null
@@ -24,13 +24,13 @@ export class RepoRepository {
       name: repo.name,
       visibility: repo.visibility ? "PRIVATE" : "PUBLIC", 
       user_id: repo.userId,
-      haveReadme: repo.haveReadme,
+      is_have_readme: repo.haveReadme,
     }));
 
     await db.insert(repositories).values(values).onConflictDoNothing(); 
   }
 
   async getByUserId(id: string) {
-    return await db.select().from(repositories).where(eq(repositories.user_id, id);
+    return await db.select().from(repositories).where(eq(repositories.user_id, id));
   }
 }
