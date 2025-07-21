@@ -42,7 +42,8 @@ export class RepositoryServices {
       const user = await this.userRepository.findByGithubId(githubId);
 
       const existingRepo = await this.repoRepository.getByUserId(user?.id);
-      logger.info(existingRepo);
+      const existingRepoNames = new Set(existingRepo.map(repo => repo.name));
+
       if (existingRepo.length > 0) {
         await redisClient.setEx(`repositories:${githubId}`, 60 * 10, JSON.stringify(existingRepo));
         return existingRepo;
@@ -57,11 +58,12 @@ export class RepositoryServices {
       });  
 
       const ownRepositories = repositories.filter(repo => repo.owner.login === user?.username);
+      const updatedRepositories = ownRepositories.filter(repo => !existingRepoNames.has(repo.full_name));
 
       const limit = pLimit(5);
 
       const userRepositories = await Promise.all( 
-        ownRepositories.map((item) => limit(async() => {
+        updatedRepositories.map((item, index) => limit(async() => {
           let haveReadme = false;
           try {
             await octokit.rest.repos.getReadme({
@@ -73,14 +75,16 @@ export class RepositoryServices {
             logger.error("Error: %o", error?.message);
           }
 
-          return new Repository(null, item.name, item.private, user?.id, haveReadme, null, null);
+          return new Repository((index + 1).toString(), item.name, item.private, user?.id, haveReadme, null, null);
         })));
 
       await this.repoRepository.saveMany(userRepositories);
 
+      const newestRepositories = [...existingRepo, ...userRepositories];
+
       await redisClient.setEx(`repositories:${githubId}`, 60 * 10, JSON.stringify(userRepositories));
 
-      return userRepositories;
+      return newestRepositories;
     } catch (error) {
       logger.info("Error On Get Repository: %o", error);
       throw error;
