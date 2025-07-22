@@ -27,9 +27,9 @@ export class ProfileServices {
 
     async delete(email: string, password:string){
       const exist =  await this.userRepository.findByEmail(email)
-      const isMatch = await bcrypt.compare(password, exist?.password)
-
       if (!exist) return (false);
+
+      const isMatch = await bcrypt.compare(password, exist?.password)
       if(!isMatch) throw new Error("password Incorect")
 
       await this.userRepository.delete(email)
