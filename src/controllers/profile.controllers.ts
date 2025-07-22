@@ -33,8 +33,7 @@ export class ProfileController {
             
             const user = (req as any).user
             const password = req.body.password
-            const password_confirmation = req.body.password_confirmation
-            const result = await this.profileService.delete(user.email, password, password_confirmation)
+            const result = await this.profileService.delete(user.email, password)
 
             if (!result && result != undefined){
                 errorResponse(res, "Account Not Found", {}, 404);  
