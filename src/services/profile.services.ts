@@ -1,6 +1,7 @@
 import { Inject, Service } from "typedi";
 import type { UserRepository } from "../repositories/user.repository";
 import { logger } from "../utils/logger.utils";
+import bcrypt from "bcryptjs";
 
 @Service()
 export class ProfileServices {
@@ -24,9 +25,14 @@ export class ProfileServices {
       }
     } 
 
-    async delete(email: string){
+    async delete(email: string, password:string, password_confirmation: string){
       const exist =  await this.userRepository.findByEmail(email)
-      if (!exist) return (false); 
+      const isMatch = await bcrypt.compare(password, exist?.password)
+
+      if (!exist) return (false);
+      if(password != password_confirmation) throw new Error("The password and password confirmation does not match")
+      if(!isMatch) throw new Error("password Incorect")
+
       await this.userRepository.delete(email)
     }
 }

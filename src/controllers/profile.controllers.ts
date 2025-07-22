@@ -3,6 +3,7 @@ import type { Request, Response } from "express";
 import type { ProfileServices } from "../services/profile.services";
 import { errorResponse, successResponse, validationErrorResponse } from "../utils/response.utils";
 import { toString } from "express-validator/lib/utils";
+import { validationResult } from "express-validator";
 
 @Service()
 export class ProfileController {
@@ -21,8 +22,19 @@ export class ProfileController {
 
     async delete(req: Request,res: Response){
         try{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                const formattedErrors = errors.array().map(err => ({
+                type: err.type,
+                message: err.msg
+                }));
+                return validationErrorResponse(res, "Invalid Request Body", formattedErrors, 422);
+            }
+            
             const user = (req as any).user
-            const result = await this.profileService.delete(user.email)
+            const password = req.body.password
+            const password_confirmation = req.body.password_confirmation
+            const result = await this.profileService.delete(user.email, password, password_confirmation)
 
             if (!result && result != undefined){
                 errorResponse(res, "Account Not Found", {}, 404);  
