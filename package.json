@@ -2,6 +2,7 @@
   "name": "leadoc-rest-api",
   "module": ".src/index.ts",
   "type": "module",
+  "author": "yordanluturyalii",
   "scripts": {
     "dev": "bun ./src/index",
     "test": "vitest"
