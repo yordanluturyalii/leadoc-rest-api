@@ -94,4 +94,26 @@ export class AuthController {
       errorResponse(res, "Failed login", error);
     }
   }
+
+    async logout(req: Request, res: Response){
+      try {
+        const user = (req as any).user
+
+        const exists = await this.authService.logout(user)
+        if(exists == false){
+          errorResponse(res, "Account Not Found", {}, 404);  
+        }else {
+          res.clearCookie("token", {
+            httpOnly: true,
+            secure: config.appEnvironment === "production",
+            sameSite: "strict"
+          });
+
+          successResponse(res, "Success Logout", {}, 200);
+        }
+
+      } catch (error) {
+        errorResponse(res, "Failed Logout", error);
+      }
+    }
 }
