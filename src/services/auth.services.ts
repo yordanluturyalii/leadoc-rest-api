@@ -55,6 +55,7 @@ export class AuthServices {
       );
 
       const user = await this.userRepository.create(name, email, undefined, undefined, undefined, hashPassword, undefined);
+      console.log(user)
       return {
         user: {
           name, email
@@ -100,5 +101,10 @@ export class AuthServices {
       logger.error("Error: %o", error);
       return error;
     }
+  }
+
+  async logout(email: string){
+    const exist = this.userRepository.findByEmail(email)
+    if(!exist) return (false)
   }
 }
