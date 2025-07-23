@@ -14,4 +14,8 @@ repoRoutes.get("/user/repositories", (req: Request, res: Response) => {
   repoController.getRepo(req, res);
 }); 
 
+repoRoutes.post("/user/repositories/:name", (req: Request, res: Response) => {
+  
+})
+
 export default repoRoutes;
