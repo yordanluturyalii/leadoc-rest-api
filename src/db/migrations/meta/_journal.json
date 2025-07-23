@@ -43,6 +43,13 @@
       "when": 1753105043682,
       "tag": "0005_huge_freak",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1753280711476,
+      "tag": "0006_jazzy_king_cobra",
+      "breakpoints": true
     }
   ]
 }
