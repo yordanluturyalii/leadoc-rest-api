@@ -16,7 +16,8 @@ export class ProfileServices {
         return {
           user:{
             name: user?.name,
-            email:user?.email
+            email:user?.email,
+            coin: user?.coin
           }
         }
       }catch(error){

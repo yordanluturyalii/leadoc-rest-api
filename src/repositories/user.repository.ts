@@ -41,13 +41,15 @@ export class UserRepository {
           user[0]?.profile_picture,
           user[0]?.github_id,
           user[0]?.password,
-          user[0].accessToken
+          user[0].accessToken,
+          user[0].coin
+
         )
       : null;
   }
 
   async findByEmail(email: string) {
-    const user = await db.select({email: users.email, username:users.username, password:users.password, name:users.name}).from(users).where(eq(users.email, email));
+    const user = await db.select({email: users.email, username:users.username, password:users.password, name:users.name, coin: users.coin}).from(users).where(eq(users.email, email));
     return user[0] 
       ? new User(
         undefined,
@@ -57,7 +59,8 @@ export class UserRepository {
         undefined,
         undefined,
         user[0].password,
-        undefined
+        undefined,
+        user[0].coin
       ) : null
   }
 
@@ -73,7 +76,9 @@ export class UserRepository {
         user[0].profile_picture,
         user[0].github_id,
         user[0].password,
-        user[0].accessToken
+        user[0].accessToken,
+        user[0].coin
+
     ) : null
   }
   

@@ -12,7 +12,8 @@ export const users = pgTable("users", {
   github_id: varchar({ length: 255 }),
   password: varchar({ length: 255 }),
   accessToken: text(),
-  credit: integer().default(0)
+  credit: integer().default(0),
+  coin: integer("coin").notNull().default(0),
 });
 
 

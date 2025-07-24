@@ -7,6 +7,7 @@ export class User {
     public profile_picture: string | null | undefined,
     public github_id: string | undefined,
     public password: string | undefined,
-    public accessToken: string | undefined
+    public accessToken: string | undefined,
+    public coin: number | undefined
   ) {}
 }
