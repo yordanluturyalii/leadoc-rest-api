@@ -8,14 +8,14 @@ setupDI();
 const repoRoutes = Router();
 const repoController = Container.get(RepositoryController);
 
-repoRoutes.use(authMiddleware);
+repoRoutes.post("/user/repositories/:name", (req: Request, res: Response) => {
+  repoController.generateReadme(req, res);
+})
+
 
 repoRoutes.get("/user/repositories", (req: Request, res: Response) => {
   repoController.getRepo(req, res);
 }); 
 
-repoRoutes.post("/user/repositories/:name", (req: Request, res: Response) => {
-  
-})
-
+repoRoutes.use(authMiddleware);
 export default repoRoutes;

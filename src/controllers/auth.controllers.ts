@@ -31,7 +31,7 @@ export class AuthController {
         maxAge: 24 * 60 * 60 * 1000
       });
 
-      res.redirect(`${config.frontendUrl}/dashboard`);
+      // res.redirect(`${config.frontendUrl}/dashboard`);
     } catch (error) {
       res.redirect(`${config.frontendUrl}/register`);
     }

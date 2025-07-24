@@ -27,4 +27,21 @@ export class RepositoryController {
 
     }
   }
+
+  async generateReadme(req: Request, res: Response) {
+    try {
+      // const user = req.user;
+      const { name } = req.params;
+
+      // const accessToken = await this.repoService.getAccessToken(user?.email, user?.id);      
+      // logger.info(accessToken);
+
+      // if (!accessToken) errorResponse(res, "Mising Access Token", {}, 401);
+      
+      const repository = await this.repoService.generateReadme("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", name, "152061596");
+      successResponse(res, "Succes Generate Readme", repository);
+    } catch (error) {
+      errorResponse(res, "Internal Server Error", error);
+    }
+  }
 }
