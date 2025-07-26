@@ -16,8 +16,8 @@ interface Config {
   smtpEndpoint: string;
   smtpPort: number;
   iamUser: string;
-  smtpUsername: string;
-  smtpPassword: string;
+  awsAccesskey: string;
+  awsSecretkey: string;
   awsRegion: string; 
 }
 
@@ -36,7 +36,7 @@ export const config: Config = {
   smtpEndpoint: process.env.SMTP_ENDPOINT || "",
   smtpPort: Number(process.env.SMTP_PORT) || 587,
   iamUser: process.env.IAM_USER || "",
-  smtpUsername: process.env.SMTP_USERNAME || "",
-  smtpPassword: process.env.SMTP_PASSWORD || "",
+  awsAccesskey: process.env.SMTP_USERNAME || "",
+  awsSecretkey: process.env.SMTP_PASSWORD || "",
   awsRegion: process.env.AWS_REGION || "ap-southeast-1",
 };
