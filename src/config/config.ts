@@ -13,6 +13,12 @@ interface Config {
   appEnvironment: string;
   frontendUrl: string;
   redisUrl: string;
+  smtpEndpoint: string;
+  smtpPort: number;
+  iamUser: string;
+  smtpUsername: string;
+  smtpPassword: string;
+  awsRegion: string; 
 }
 
 export const config: Config = {
@@ -26,5 +32,11 @@ export const config: Config = {
   jwtSecret: process.env.JWT_SECRET || "",
   appEnvironment: process.env.APP_ENV || "",
   frontendUrl: process.env.FRONTEND_URL || "",
-  redisUrl: process.env.REDIS_URL || ""
+  redisUrl: process.env.REDIS_URL || "",
+  smtpEndpoint: process.env.SMTP_ENDPOINT || "",
+  smtpPort: Number(process.env.SMTP_PORT) || 587,
+  iamUser: process.env.IAM_USER || "",
+  smtpUsername: process.env.SMTP_USERNAME || "",
+  smtpPassword: process.env.SMTP_PASSWORD || "",
+  awsRegion: process.env.AWS_REGION || "ap-southeast-1",
 };
