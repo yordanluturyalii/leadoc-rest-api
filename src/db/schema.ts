@@ -13,6 +13,7 @@ export const users = pgTable("users", {
   password: varchar({ length: 255 }),
   accessToken: text(),
   credit: integer().default(0),
+  is_verified: boolean().notNull().default(false),
   coin: integer("coin").notNull().default(0),
 });
 

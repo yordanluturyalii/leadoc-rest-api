@@ -50,6 +50,27 @@
       "when": 1753280711476,
       "tag": "0006_jazzy_king_cobra",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1753511711191,
+      "tag": "0007_living_cerebro",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1753511833403,
+      "tag": "0008_silent_starfox",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1753512504552,
+      "tag": "0009_tan_harpoon",
+      "breakpoints": true
     }
   ]
 }
