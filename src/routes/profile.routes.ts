@@ -4,7 +4,7 @@ import { ProfileController } from "../controllers/profile.controllers";
 import { Router, type Request, type Response } from "express";
 import authMiddleware from "../middlewares/auth.middlewares";
 import { profileValidator } from "../validations/profile.vallidation";
-import { updateProfileValidator } from "../validations/update_profile.validation";
+import { updateProfileValidator } from "../validations/update-profile.validation";
 
 setupDI();
 const profileRoutes = Router();
