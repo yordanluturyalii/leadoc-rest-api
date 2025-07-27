@@ -89,4 +89,19 @@ export class UserRepository {
       throw error?.message;
     }
   }
+
+  async update(
+    name: string,
+    email?: string,
+    oldEmail?: string
+  ) {
+    try {
+      await db.update(users).set({
+        name,
+        email,
+      }).where(eq(users.email, oldEmail));
+    } catch (error) {
+      throw error?.message;
+    }
+  }
 }
