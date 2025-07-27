@@ -36,7 +36,7 @@ export const config: Config = {
   smtpEndpoint: process.env.SMTP_ENDPOINT || "",
   smtpPort: Number(process.env.SMTP_PORT) || 587,
   iamUser: process.env.IAM_USER || "",
-  awsAccesskey: process.env.SMTP_USERNAME || "",
-  awsSecretkey: process.env.SMTP_PASSWORD || "",
+  awsAccesskey: process.env.AWS_ACCESSKEY || "",
+  awsSecretkey: process.env.AWS_SECRETKEY || "",
   awsRegion: process.env.AWS_REGION || "ap-southeast-1",
 };
