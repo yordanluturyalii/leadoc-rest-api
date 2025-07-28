@@ -78,7 +78,7 @@ export class ProfileServices {
         }
       }
       
-      const existingUsernameInRedis = await redisClient.get(`username:${connect?.username}`)
+      const existingUsernameInRedis = await redisClient.get(`github:${connect?.github_id}`)
 
       if(!existingUsernameInRedis){
         const octokit  = new Octokit({
@@ -96,13 +96,13 @@ export class ProfileServices {
           "profile_url": data.avatar_url
         }
 
-        await redisClient.setEx(`username:${connect?.username}`, 60 * 10, JSON.stringify(result))
+        await redisClient.setEx(`github:${connect?.github_id}`, 60 * 10, JSON.stringify(result))
 
         return {
           user: result
         }
       } else {
-        const dataFromRedis = await redisClient.get(`username:${connect?.username}`)
+        const dataFromRedis = await redisClient.get(`github:${connect?.github_id}`)
 
         return {
           user: JSON.parse(dataFromRedis)
