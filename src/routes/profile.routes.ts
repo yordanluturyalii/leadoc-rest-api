@@ -13,7 +13,7 @@ const profileController = Container.get(ProfileController);
 profileRoutes.get("/user/me", authMiddleware, (req: Request, res: Response) => profileController.getMe(req, res));
 profileRoutes.post("/user/delete", authMiddleware, profileValidator, (req: Request, res: Response) => profileController.delete(req, res));
 profileRoutes.patch("/user/update", authMiddleware, updateProfileValidator, (req: Request, res: Response) => profileController.update(req, res));
-profileRoutes.get("/user/check", authMiddleware, (req: Request, res: Response) => profileController.checkStatus(req, res));
+profileRoutes.get("/user/connection", authMiddleware, (req: Request, res: Response) => profileController.checkStatus(req, res));
 
 
 export default profileRoutes;
