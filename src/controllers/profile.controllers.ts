@@ -81,11 +81,22 @@ export class ProfileController {
     async checkStatus(req:Request, res:Response){
         try{
             const user = (req as any).user
-            const result = await this.profileService.checkStatus(user.email)
-            if(!result){
-                errorResponse(res, "Account Not Found", {}, 404);  
+            if(!user.id){
+                return successResponse(res, "Account Not Found", {
+                    user:{
+                        "connection_status": "DISCONNECTED",
+                        "username": "",
+                        "profile_picture":  "",
+                        "profile_url": ""
+                    }
+                }, 404);  
+            }
+
+            const result = await this.profileService.checkStatus(user?.id)
+            if(result.user.connection_status == "DISCONNECTED"){
+                return successResponse(res, "Account Not Found", result, 404);  
             }else {
-                successResponse(res, "Success Get Status Connection", result);
+                return successResponse(res, "Success Get Status Connection", result);
             }
         }catch(error){
             errorResponse(res, "Fails get status", error);

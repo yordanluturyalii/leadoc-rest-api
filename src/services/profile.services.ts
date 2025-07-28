@@ -67,9 +67,16 @@ export class ProfileServices {
       }
     }
 
-    async checkStatus(email: string){
-      const connect = await this.userRepository.findByEmail(email)
-      if(connect.github_id == undefined) return (false)
+    async checkStatus(id: string){
+      const connect = await this.userRepository.findByGithubId(id)
+      if(connect.github_id == undefined) return {
+        user:{
+          "connection_status": "DISCONNECTED",
+          "username": "",
+          "profile_picture":  "",
+          "profile_url": ""
+        }
+      }
       
       const existingUsernameInRedis = await redisClient.get(`username:${connect?.username}`)
 
