@@ -77,4 +77,19 @@ export class ProfileController {
             errorResponse(res, "Fails update data", error);
         }   
     }
+
+    async checkStatus(req:Request, res:Response){
+        try{
+            const user = (req as any).user
+            const result = await this.profileService.checkStatus(user.email)
+            if(!result){
+                errorResponse(res, "Account Not Found", {}, 404);  
+            }else {
+                successResponse(res, "Success Get Status Connection", result);
+            }
+        }catch(error){
+            errorResponse(res, "Fails get status", error);
+        }
+
+    }
 }

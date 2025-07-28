@@ -4,6 +4,8 @@ import { logger } from "../utils/logger.utils";
 import bcrypt from "bcryptjs";
 import { config } from "../config/config";
 import jwt from 'jsonwebtoken';
+import { Octokit } from "octokit";
+import redisClient from "../config/redis.config";
 
 @Service()
 export class ProfileServices {
@@ -63,5 +65,42 @@ export class ProfileServices {
         logger.error("Error: %o", error);
         return error;
       }
+    }
+
+    async checkStatus(email: string){
+      const connect = await this.userRepository.findByEmail(email)
+      if(connect.github_id == undefined) return (false)
+      
+      const existingUsernameInRedis = await redisClient.get(`username:${connect?.username}`)
+
+      if(!existingUsernameInRedis){
+        const octokit  = new Octokit({
+          auth: connect?.accessToken
+        })
+        
+        const {data} = await octokit.rest.users.getByUsername({
+          username: connect?.username
+        })
+
+        const result = {
+          "connection_status": "CONNECTED",
+          "username": connect.username,
+          "profile_picture": connect.profile_picture,
+          "profile_url": data.avatar_url
+        }
+
+        await redisClient.setEx(`username:${connect?.username}`, 60 * 10, JSON.stringify(result))
+
+        return {
+          user: result
+        }
+      } else {
+        const dataFromRedis = await redisClient.get(`username:${connect?.username}`)
+
+        return {
+          user: JSON.parse(dataFromRedis)
+        }
+      }
+
     }
 }
