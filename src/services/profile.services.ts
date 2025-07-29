@@ -64,4 +64,20 @@ export class ProfileServices {
         return error;
       }
     }
+
+    async updatePassword(new_password: string, password:string, cookie:object){
+      let githubExists
+      if(!cookie.id) githubExists = await this.userRepository.findByEmail(cookie.email)
+      if(cookie.id) githubExists = await this.userRepository.findByGithubId(cookie.id)
+      
+      if(githubExists?.password){
+        const isMatch = await bcrypt.compare(password, githubExists?.password)
+        if(!password || password.length < 1) return("Password is required")
+        if (!isMatch) return("Password Incorrect");
+      }
+      const hashPassword = await bcrypt.hash(new_password, 10);
+      await this.userRepository.updatePassword(hashPassword, cookie.username)
+
+      return null
+    }
 }

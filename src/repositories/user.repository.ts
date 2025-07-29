@@ -49,7 +49,7 @@ export class UserRepository {
   }
 
   async findByEmail(email: string) {
-    const user = await db.select({email: users.email, username:users.username, password:users.password, name:users.name, coin: users.coin}).from(users).where(eq(users.email, email));
+    const user = await db.select({email: users.email, username:users.username, password:users.password, name:users.name, coin: users.coin, github_id: users.github_id}).from(users).where(eq(users.email, email));
     return user[0] 
       ? new User(
         undefined,
@@ -57,7 +57,7 @@ export class UserRepository {
         user[0]?.email,
         user[0]?.username,
         undefined,
-        undefined,
+        user[0]?.github_id,
         user[0].password,
         undefined,
         user[0].coin
@@ -100,6 +100,18 @@ export class UserRepository {
         name,
         email,
       }).where(eq(users.email, oldEmail));
+    } catch (error) {
+      throw error?.message;
+    }
+  }
+
+  async updatePassword(new_password: string, username: string){
+    const password = new_password
+    
+    try {
+      await db.update(users).set({
+        password,
+      }).where(eq(users.username, username));
     } catch (error) {
       throw error?.message;
     }

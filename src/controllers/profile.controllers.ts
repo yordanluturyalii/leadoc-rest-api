@@ -77,4 +77,30 @@ export class ProfileController {
             errorResponse(res, "Fails update data", error);
         }   
     }
+
+
+    async updatePassword(req:Request, res:Response){
+        try{
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                const formattedErrors = errors.array().map(err => ({
+                    type: err.type,
+                    message: err.msg
+                }));
+                return validationErrorResponse(res, "Invalid Request Body", formattedErrors, 422);
+            }
+            
+            const cookie = (req as any).user
+            const new_password = req.body.new_password
+            const password = req.body.password
+            const result = await this.profileService.updatePassword(new_password, password, cookie)
+            
+            if(result == "Password is required") return errorResponse(res, "Password is required", {}, 422);  
+            if(result == "Password Incorrect") return errorResponse(res, "Password Incorrect", {}, 422);  
+            return successResponse(res, "Success update password profile User", {}, 202)
+            
+        }catch(error){
+            return errorResponse(res, "Fails update data", error);
+        }   
+    }
 }
