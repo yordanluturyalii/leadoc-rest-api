@@ -62,7 +62,7 @@ export class AuthController {
       })
       successResponse(res, "Success Create Account", user, 201);
     } catch (error) {
-      errorResponse(res, "Failed To Create Account", error);
+      errorResponse(res, "Internal Server Error", error);
     }
   }
 

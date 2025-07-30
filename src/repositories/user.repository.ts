@@ -3,10 +3,14 @@ import { db } from "../db/db";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { User } from "../db/models/user.model";
+import type { NodePgDatabase, NodePgTransaction } from "drizzle-orm/node-postgres";
+
+type Executor = NodePgDatabase | NodePgTransaction<any, any>;
 
 @Service()
 export class UserRepository {
   async create(
+    tx: Executor,
     name: string,
     email?: string,
     username?: string,
@@ -16,7 +20,7 @@ export class UserRepository {
     accessToken?: string,
   ) {
     try {
-      await db.insert(users).values({
+      await tx.insert(users).values({
         name,
         email,
         username,

@@ -4,14 +4,14 @@ import jwt from "jsonwebtoken";
 import { config } from "../config/config";
 import { logger } from "../utils/logger.utils";
 import bcrypt from "bcrypt";
-import { response } from "express";
-
+import { AWSConfig } from "../config/aws.config";
+import { db } from "../db/db";
 
 @Service()
 export class AuthServices {
   constructor(
     @Inject("UserRepository") public userRepository: UserRepository,
-  ) {}
+  ) { }
   async authorize(
     githubId: string,
     accessToken: string,
@@ -33,49 +33,50 @@ export class AuthServices {
           accessToken,
         );
     } catch (error) {
-      logger.error("Error: %o", error);
       return error;
     }
   }
 
   async register(name: string, email: string, password: string, passwordConfirmation: string) {
     try {
-      const existingUser = await this.userRepository.findByEmail(email);
-      if (existingUser) throw new Error("Email already taken");
-      if (password !== passwordConfirmation) throw new Error("The password confirmation does not match.");
+      await db.transaction(async (tx) => {
+        const existingUser = await this.userRepository.findByEmail(email);
+        if (existingUser) throw new Error("Email already taken");
+        if (password !== passwordConfirmation) throw new Error("The password confirmation does not match.");
 
-      const hashPassword = await bcrypt.hash(password, 10);
+        const hashPassword = await bcrypt.hash(password, 10);
 
-      const token = jwt.sign(
-        {
-          name, email, hashPassword
-        },
-        config.jwtSecret,
-        { expiresIn: "7d" },
-      );
+        const token = jwt.sign(
+          {
+            name, email, hashPassword
+          },
+          config.jwtSecret,
+          { expiresIn: "7d" },
+        );
 
-      const user = await this.userRepository.create(name, email, undefined, undefined, undefined, hashPassword, undefined);
-      console.log(user)
-      return {
-        user: {
-          name, email
-        },
-        token
-      }
+        const user = await this.userRepository.create(tx, name, email, undefined, undefined, undefined, hashPassword, undefined);
+
+        return {
+          user: {
+            name, email
+          },
+          token
+        }
+      })
     } catch (error) {
       logger.error("Error: %o", error);
-      return error;
+      throw error;
     }
   }
 
-  async login(email: string,password: string) {
-    try{
+  async login(email: string, password: string) {
+    try {
       const existingEmail = await this.userRepository.findByEmail(email)
       if (!existingEmail) throw new Error("Account not found. Please check your email and password or create a new one.");
 
       const isMatch = await bcrypt.compare(password, existingEmail.password)
       if (!isMatch) throw new Error("Password Incorrect");
-      
+
       const token = jwt.sign(
         {
           name: existingEmail.name,
@@ -86,10 +87,10 @@ export class AuthServices {
         config.jwtSecret,
         { expiresIn: "7d" },
       );
-      
-      
+
+
       return {
-        user:{
+        user: {
           username: existingEmail.username,
           email: existingEmail.email
         },
@@ -97,14 +98,14 @@ export class AuthServices {
       }
 
 
-    }catch(error){
+    } catch (error) {
       logger.error("Error: %o", error);
-      return error;
+      throw error;
     }
   }
 
-  async logout(email: string){
+  async logout(email: string) {
     const exist = this.userRepository.findByEmail(email)
-    if(!exist) return (false)
+    if (!exist) return (false)
   }
 }
