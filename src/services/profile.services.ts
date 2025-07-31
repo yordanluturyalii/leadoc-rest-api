@@ -4,6 +4,8 @@ import { logger } from "../utils/logger.utils";
 import bcrypt from "bcryptjs";
 import { config } from "../config/config";
 import jwt from 'jsonwebtoken';
+import { Octokit } from "octokit";
+import redisClient from "../config/redis.config";
 
 @Service()
 export class ProfileServices {
@@ -63,5 +65,49 @@ export class ProfileServices {
         logger.error("Error: %o", error);
         return error;
       }
+    }
+
+    async checkStatus(id: string){
+      const connect = await this.userRepository.findByGithubId(id)
+      if(connect.github_id == undefined) return {
+        user:{
+          "connection_status": "DISCONNECTED",
+          "username": "",
+          "profile_picture":  "",
+          "profile_url": ""
+        }
+      }
+      
+      const existingUsernameInRedis = await redisClient.get(`github:${connect?.github_id}`)
+
+      if(!existingUsernameInRedis){
+        const octokit  = new Octokit({
+          auth: connect?.accessToken
+        })
+        
+        const {data} = await octokit.rest.users.getByUsername({
+          username: connect?.username
+        })
+
+        const result = {
+          "connection_status": "CONNECTED",
+          "username": connect.username,
+          "profile_picture": connect.profile_picture,
+          "profile_url": data.avatar_url
+        }
+
+        await redisClient.setEx(`github:${connect?.github_id}`, 60 * 10, JSON.stringify(result))
+
+        return {
+          user: result
+        }
+      } else {
+        const dataFromRedis = await redisClient.get(`github:${connect?.github_id}`)
+
+        return {
+          user: JSON.parse(dataFromRedis)
+        }
+      }
+
     }
 }
