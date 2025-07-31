@@ -28,13 +28,15 @@ export class AuthController {
       res.cookie('token', token, {
         httpOnly: true,
         secure: config.appEnvironment === "production",
-        sameSite: "none",
+        sameSite: "lax",
         maxAge: 24 * 60 * 60 * 1000
       });
 
-      res.redirect(`${config.frontendUrl}/dashboard`);
+      successResponse(res,"success", {})
+      // res.redirect(`${config.frontendUrl}/dashboard`);
     } catch (error) {
-      res.redirect(`${config.frontendUrl}/register`);
+      logger.info(error)
+      // res.redirect(`${config.frontendUrl}/register`);
     }
   }
 
