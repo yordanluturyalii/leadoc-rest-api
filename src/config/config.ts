@@ -19,6 +19,8 @@ interface Config {
   awsAccesskey: string;
   awsSecretkey: string;
   awsRegion: string; 
+  emailUser?: string;
+  emailPassword?: string;
 }
 
 export const config: Config = {
@@ -39,4 +41,6 @@ export const config: Config = {
   awsAccesskey: process.env.AWS_ACCESSKEY || "",
   awsSecretkey: process.env.AWS_SECRETKEY || "",
   awsRegion: process.env.AWS_REGION || "ap-southeast-1",
+  emailUser: process.env.GOOGLE_APP_EMAIL || "",
+  emailPassword: process.env.GOOGLE_APP_PASSWORD || "",
 };
