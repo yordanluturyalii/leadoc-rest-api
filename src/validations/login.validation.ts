@@ -16,7 +16,8 @@ export const loginValidator = [
     body('password', 'Password is required').not().isEmpty(),
     body("password").custom(async (value, {req}) => {
         const passwordHash = await userRepository.findByEmail(req.body.email);
-        const isMatch = await bcrypt.compare(value, passwordHash?.password)
+        const passwordLowercase = value.toLowerCase()
+        const isMatch = await bcrypt.compare(passwordLowercase, passwordHash?.password)
         if (!isMatch) throw new Error("Password Incorrect");
     }),
 ];
