@@ -15,8 +15,9 @@ export const updatePasswordValidator = [
         if(cookie.id) githubExists = await userRepository.findByGithubId(cookie.id)
         
         if(githubExists?.password){
+            const passwordLowercase = value.toLowerCase()
             if(!value || value.length < 1)throw new Error("Password is required")    
-            const isMatch = await bcrypt.compare(value, githubExists?.password)
+            const isMatch = await bcrypt.compare(passwordLowercase, githubExists?.password)
             if (!isMatch) throw new Error("Password Incorrect");
         }
     }),

@@ -71,11 +71,14 @@ export class ProfileServices {
       if(cookie.id) githubExists = await this.userRepository.findByGithubId(cookie.id)
       
       if(githubExists?.password){
-        const isMatch = await bcrypt.compare(password, githubExists?.password)
+        const passwordLowercase = password.toLowerCase()
+        const isMatch = await bcrypt.compare(passwordLowercase, githubExists?.password)
         if(!password || password.length < 1) return("Password is required")
         if (!isMatch) return("Password Incorrect");
       }
-      const hashPassword = await bcrypt.hash(new_password, 10);
+
+      const newPaswwordLowerCase = new_password.toLowerCase()
+      const hashPassword = await bcrypt.hash(newPaswwordLowerCase, 10);
       await this.userRepository.updatePassword(hashPassword, cookie.username)
 
       return null
