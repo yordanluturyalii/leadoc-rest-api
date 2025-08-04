@@ -15,7 +15,7 @@ profileRoutes.get("/user/me", authMiddleware, (req: Request, res: Response) => p
 profileRoutes.post("/user/delete", authMiddleware, profileValidator, (req: Request, res: Response) => profileController.delete(req, res));
 profileRoutes.patch("/user/update", authMiddleware, updateProfileValidator, (req: Request, res: Response) => profileController.update(req, res));
 profileRoutes.patch("/user/update/password", authMiddleware, updatePasswordValidator, (req: Request, res: Response) => profileController.updatePassword(req, res));
-
+profileRoutes.get("/user/connection", authMiddleware, (req: Request, res: Response) => profileController.checkStatus(req, res));
 
 
 export default profileRoutes;
