@@ -103,4 +103,29 @@ export class ProfileController {
             return errorResponse(res, "Fails update data", error);
         }   
     }
+
+    async checkStatus(req:Request, res:Response){
+        try{
+            const user = (req as any).user
+            if(!user.id){
+                return successResponse(res, "Success Get Status Connection", {
+                    user:{
+                        "connection_status": "DISCONNECTED",
+                        "username": "",
+                        "profile_picture":  "",
+                        "profile_url": ""
+                    }
+                }, 404);  
+            }
+
+            const result = await this.profileService.checkStatus(user?.id)
+            if(result.user.connection_status == "DISCONNECTED"){
+                return successResponse(res, "Success Get Status Connection", result, 404);  
+            }else {
+                return successResponse(res, "Success Get Status Connection", result);
+            }
+        }catch(error){
+            errorResponse(res, "Fails get status", error);
+        }
+    }
 }

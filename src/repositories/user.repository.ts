@@ -1,12 +1,16 @@
 import { Service } from "typedi";
 import { db } from "../db/db";
 import { users } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { User } from "../db/models/user.model";
+import type { NodePgDatabase, NodePgTransaction } from "drizzle-orm/node-postgres";
+
+type Executor = NodePgDatabase | NodePgTransaction<any, any>;
 
 @Service()
 export class UserRepository {
   async create(
+    tx: Executor,
     name: string,
     email?: string,
     username?: string,
@@ -16,7 +20,7 @@ export class UserRepository {
     accessToken?: string,
   ) {
     try {
-      await db.insert(users).values({
+      await tx.insert(users).values({
         name,
         email,
         username,
@@ -34,29 +38,29 @@ export class UserRepository {
     const user = await db.select().from(users).where(eq(users.github_id, id));
     return user[0]
       ? new User(
-          user[0]?.id,
-          user[0]?.name,
-          user[0]?.email,
-          user[0]?.username,
-          user[0]?.profile_picture,
-          user[0]?.github_id,
-          user[0]?.password,
-          user[0].accessToken,
-          user[0].coin
+        user[0]?.id,
+        user[0]?.name,
+        user[0]?.email,
+        user[0]?.username,
+        user[0]?.profile_picture,
+        user[0]?.github_id,
+        user[0]?.password,
+        user[0].accessToken,
+        user[0].coin
 
-        )
+      )
       : null;
   }
 
   async findByEmail(email: string) {
-    const user = await db.select({email: users.email, username:users.username, password:users.password, name:users.name, coin: users.coin, github_id: users.github_id}).from(users).where(eq(users.email, email));
+    const user = await db.select({email: users.email, username:users.username, password:users.password, name:users.name, coin: users.coin, github_id: users.github_id, profile_picture: users.profile_picture}).from(users).where(eq(users.email, email));
     return user[0] 
       ? new User(
         undefined,
-        user[0]?.name, 
+        user[0]?.name,
         user[0]?.email,
         user[0]?.username,
-        undefined,
+        user[0]?.profile_picture,
         user[0]?.github_id,
         user[0].password,
         undefined,
@@ -67,7 +71,7 @@ export class UserRepository {
 
   async findById(id: string) {
     const user = await db.select().from(users).where(eq(users.id, id));
-    return user[0] ? 
+    return user[0] ?
       new User(
         user[0].id,
         user[0].name,
@@ -79,13 +83,13 @@ export class UserRepository {
         user[0].accessToken,
         user[0].coin
 
-    ) : null
+      ) : null
   }
-  
-  async delete(email: string){
-    try{
+
+  async delete(email: string) {
+    try {
       await db.delete(users).where(eq(users.email, email));
-    }catch (error) {
+    } catch (error) {
       throw error?.message;
     }
   }
