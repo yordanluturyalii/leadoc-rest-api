@@ -1,6 +1,6 @@
 {
-	"id": "db3f57fd-9313-46e6-9234-9e1115a5fe26",
-	"prevId": "c07ed154-fb58-4ffa-8114-35d4f74c4bdc",
+	"id": "636b2876-dbd4-4ab0-a72e-12b0c852eb61",
+	"prevId": "7fdaa9b0-7c9b-447c-bc93-49065c888f4d",
 	"version": "7",
 	"dialect": "postgresql",
 	"tables": {
@@ -120,6 +120,19 @@
 					"type": "integer",
 					"primaryKey": false,
 					"notNull": false,
+					"default": 0
+				},
+				"verified_at": {
+					"name": "verified_at",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"coin": {
+					"name": "coin",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true,
 					"default": 0
 				}
 			},

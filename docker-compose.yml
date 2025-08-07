@@ -1,0 +1,13 @@
+services:
+  app:
+    build: ./
+    container_name: leadoc-app
+    ports:
+      - 3001:3001
+    env_file:
+      - .env
+    networks:
+      - leadoc_app_network
+networks:
+  leadoc_app_network:
+    driver: bridge
