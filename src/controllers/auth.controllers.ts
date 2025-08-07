@@ -78,7 +78,7 @@ export class AuthController {
 			});
 			successResponse(res, "Success Create Account", user, 201);
 		} catch (error) {
-			errorResponse(res, "Internal Server Error", error);
+			errorResponse(res, "Internal Server Error", {});
 		}
 	}
 
@@ -165,7 +165,7 @@ export class AuthController {
 				errorResponse(res, "Failed to send verification email", {}, 400);
 			}
 		} catch (error) {
-			errorResponse(res, "Internal Server Error", error);
+			errorResponse(res, "Internal Server Error", {});
 		}
 	}
 
@@ -200,7 +200,7 @@ export class AuthController {
 				successResponse(res, "Password reset successfully", {}, 200);
 			}
 		} catch (error) {
-			errorResponse(res, "Internal Server Error", error);
+			errorResponse(res, "Internal Server Error", {});
 		}
 	}
 }

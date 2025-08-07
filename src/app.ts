@@ -29,7 +29,6 @@ app.use(
 		saveUninitialized: true,
 	}),
 );
-app.use(cookieParser());
 app.use(passport.session());
 app.use(cookieParser());
 
