@@ -21,9 +21,8 @@ export const users = pgTable("users", {
 	github_id: varchar({ length: 255 }),
 	password: varchar({ length: 255 }),
 	accessToken: text(),
-	credit: integer().default(0),
 	is_verified: boolean().notNull().default(false),
-	coin: integer("coin").notNull().default(0),
+	coin: integer("coin").notNull().default(100),
 });
 
 export const repositories = pgTable("repositories", {
@@ -36,13 +35,30 @@ export const repositories = pgTable("repositories", {
 	updated_at: timestamp(),
 });
 
+export const detailRepositories = pgTable("detail_repositories", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	version: integer().notNull(),
+	content: text().notNull(),
+	repository_id: uuid().notNull(),
+	created_at: timestamp().defaultNow(),
+	updated_at: timestamp(),
+});
+
 export const usersRelations = relations(users, ({ many }) => ({
 	repositories: many(repositories),
 }));
 
-export const repositoriesRelations = relations(repositories, ({ one }) => ({
+export const repositoriesRelations = relations(repositories, ({ one, many }) => ({
 	user: one(users, {
 		fields: [repositories.user_id],
 		references: [users.id],
 	}),
+	detailRepositories: many(detailRepositories)
 }));
+
+export const detailRepositoriesRelations = relations(detailRepositories, ({ one }) => ({
+	repositories: one(repositories, {
+		fields: [detailRepositories.repository_id],
+		references: [repositories.id]
+	})
+}))

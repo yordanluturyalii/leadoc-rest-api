@@ -1,47 +1,24 @@
-export const importantFiles = [
-	"README.md",
-	"LICENSE",
-	".env.example",
-	".gitignore",
-	"Makefile",
-	"package.json",
-	"tsconfig.json",
-	"vite.config.js",
-	"webpack.config.js",
-	"babel.config.js",
-	"next.config.js",
-	"jest.config.js",
-	".eslintrc.js",
-	".prettierrc",
-	"requirements.txt",
-	"pyproject.toml",
-	"Pipfile",
-	"Pipfile.lock",
-	"setup.py",
-	"go.mod",
-	"go.sum",
-	"Cargo.toml",
-	"Cargo.lock",
-	"pom.xml",
-	"build.gradle",
-	"settings.gradle",
-	"Gemfile",
-	"Gemfile.lock",
-	"composer.json",
-	"composer.lock",
-	"pubspec.yaml",
-	"Dockerfile",
-	"docker-compose.yml",
-	"Procfile",
-	"vercel.json",
-	"netlify.toml",
-	".github/workflows",
-	".gitlab-ci.yml",
-	".circleci/config.yml",
-	"terraform.tf",
-	"terraform.tfvars",
-	"cloudformation.yaml",
-	"mkdocs.yml",
-	"docusaurus.config.js",
-	"docs/index.md",
-];
+export interface RepoAnalysis {
+	name: string;
+	description: string;
+	language: string;
+	dependencies: string[];
+	devDependencies: string[];
+	structure: string[];
+	hasDockerfile: boolean;
+	hasTests: boolean;
+	hasCI: boolean;
+	license: string | null;
+	topics: string[];
+	stars: number;
+	forks: number;
+	size: number;
+	defaultBranch: string;
+	homepage: string | null;
+	hasWiki: boolean;
+	hasPages: boolean;
+	packageManager: string;
+	scripts: Record<string, string>;
+	environment: string[];
+	apiEndpoints: string[];
+}

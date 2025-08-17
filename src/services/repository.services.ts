@@ -1,4 +1,4 @@
-import { Base64 } from "js-base64";
+import { PromptTemplate } from "@langchain/core/prompts";
 import { Octokit } from "octokit";
 import pLimit from "p-limit";
 import { Inject, Service } from "typedi";
@@ -6,15 +6,22 @@ import redisClient from "../config/redis.config";
 import { Repository } from "../db/models/repositories.model";
 import type { RepoRepository } from "../repositories/repo.repository";
 import type { UserRepository } from "../repositories/user.repository";
-import { importantFiles } from "../utils/constant.util";
 import { logger } from "../utils/logger.utils";
+import { ReadmeServices } from "./readme.services";
+import type { AIServices } from "./ai.services";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import { config } from "../config/config";
+import type { DetailRepoRepositories } from "../repositories/detail-repo.repository";
 
 @Service()
 export class RepositoryServices {
 	constructor(
 		@Inject("UserRepository") private userRepository: UserRepository,
 		@Inject("RepoRepository") private repoRepository: RepoRepository,
-	) {}
+		@Inject("AIServices") private aiServices: AIServices,
+		@Inject("DetailRepoRepository") private detailRepoRepository: DetailRepoRepositories
+	) {
+	}
 
 	async getAccessToken(
 		email: string,
@@ -72,16 +79,16 @@ export class RepositoryServices {
 				});
 
 			const ownRepositories = repositories.filter(
-				(repo) => repo.owner.login === user?.username,
+				(repo: any) => repo.owner.login === user?.username,
 			);
 			const updatedRepositories = ownRepositories.filter(
-				(repo) => !existingRepoNames.has(repo.full_name),
+				(repo: any) => !existingRepoNames.has(repo.full_name),
 			);
 
 			const limit = pLimit(5);
 
 			const userRepositories = await Promise.all(
-				updatedRepositories.map((item, index) =>
+				updatedRepositories.map((item: any, index: any) =>
 					limit(async () => {
 						let haveReadme = false;
 						try {
@@ -124,69 +131,58 @@ export class RepositoryServices {
 		}
 	}
 
-	async generateReadme(accessToken: string, name: string, githubId: string) {
-		const octokit = new Octokit({
-			auth: accessToken,
-		});
+	async generateReadme(section: string[], repo: string, githubId: string) {
+		try {
+			const user = await this.userRepository.findByGithubId(githubId);
+			if (!user) throw new Error("Unauthorized");
+			const githubUsername = user?.username as string;
 
-		const user = await this.userRepository.findByGithubId(githubId);
+			if (user?.coin as number <= 0) throw new Error("Not enough coin");
 
-		const repoInfo = await octokit.rest.repos.get({
-			owner: user?.username || "",
-			repo: name,
-		});
-		const defaultBranch = repoInfo.data.default_branch;
+			const currentCoin = user?.coin as number - section.length;
+			await this.userRepository.updateCoin(currentCoin, user.username as string);
 
-		const repoRootContent = await octokit.rest.repos.getContent({
-			owner: user?.username || "",
-			repo: name,
-			path: "",
-			ref: defaultBranch,
-		});
+			const readmeServices = new ReadmeServices(user?.accessToken as string);
+			const analyzeProject = await readmeServices.analyzeRepository(githubUsername, repo);
 
-		if (!Array.isArray(repoRootContent.data))
-			throw new Error("This repo is empty");
+			const prompt = this.aiServices.generateSection(section, analyzeProject, true);
 
-		const metadata: Record<string, any> = {};
-		const structure: string[] = [];
+			const llm = new ChatGoogleGenerativeAI({
+				model: "gemma-3n-e2b-it",
+				temperature: 0,
+				apiKey: config.aiApiKey
+			});
 
-		for (const item of repoRootContent.data) {
-			const name = item.name.toLowerCase();
-			const isImportant = importantFiles
-				.map((f) => f.toLowerCase())
-				.includes(name.toLowerCase());
+			const promptTemplate = PromptTemplate.fromTemplate(`
+				Anda adalah seorang expert technical writer khusus README.md untuk proyek software.
 
-			if (item.type === "dir") {
-				structure.push(item.name);
-			}
+				Tugas Anda:
+				1. Analisis input proyek yang diberikan.
+				2. Hasilkan konten README.md sesuai instruksi section yang diberikan.
+				3. Jangan menambahkan teks lain.
+				4. Gunakan Bahasa yang professional serta buat text panjang
 
-			if (!isImportant && item.type !== "file") continue;
+				INPUT:
+				{prompt}
 
-			try {
-				logger.info(item.path);
-				const fileContent = await octokit.rest.repos.getContent({
-					owner: user?.username || "",
-					repo: name,
-					path: item.path,
-					ref: defaultBranch,
-				});
+				OUTPUT:
+				README.md section, tanpa tambahan teks atau penjelasan lain.
+			`);
 
-				const content = Base64.decode((fileContent.data as any).content || "");
-				metadata[item.name] = content;
-			} catch (err) {
-				logger.warn(
-					`⚠️ Failed to get content for ${item.name}: ${err?.message}`,
-				);
-			}
+			const chain = promptTemplate.pipe(llm);
+
+			const result = await chain.invoke({ prompt: prompt });
+
+			const cleanResult = result.content.toString().replace(/\\n/g, '\n');
+
+			const updatedRepo = await this.repoRepository.updateByName(repo, {updated_at: new Date()});
+			logger.info("From Repository Service - Updated Repo: %o", updatedRepo?.id);
+
+			await this.detailRepoRepository.save(updatedRepo?.id as string, cleanResult);
+
+			return cleanResult;
+		} catch (error) {
+			return error;
 		}
-
-		return {
-			username: user?.username,
-			name,
-			// language: this.detectLanguage(Object.keys(metadata)),
-			structure,
-			metadata,
-		};
-		// return content;
 	}
 }

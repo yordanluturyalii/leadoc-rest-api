@@ -4,7 +4,7 @@
 	"type": "module",
 	"author": "yordanluturyalii",
 	"scripts": {
-		"dev": "bun ./src/index",
+		"dev": "bun --watch ./src/index",
 		"test": "vitest"
 	},
 	"private": true,
@@ -33,6 +33,8 @@
 		"typescript": "^5"
 	},
 	"dependencies": {
+		"@langchain/core": "^0.3.68",
+		"@langchain/google-genai": "^0.2.16",
 		"bcrypt": "^6.0.0",
 		"bcryptjs": "^3.0.2",
 		"cookie-parser": "^1.4.7",
@@ -45,6 +47,7 @@
 		"express-validator": "^7.2.1",
 		"js-base64": "^3.7.7",
 		"jsonwebtoken": "^9.0.2",
+		"langchain": "^0.3.30",
 		"nodemailer": "^7.0.5",
 		"octokit": "^5.0.3",
 		"p-limit": "^6.2.0",
