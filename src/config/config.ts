@@ -21,6 +21,7 @@ interface Config {
 	awsRegion: string;
 	emailUser?: string;
 	emailPassword?: string;
+	aiApiKey: string;
 }
 
 export const config: Config = {
@@ -43,4 +44,5 @@ export const config: Config = {
 	awsRegion: process.env.AWS_REGION || "ap-southeast-1",
 	emailUser: process.env.GOOGLE_APP_EMAIL || "",
 	emailPassword: process.env.GOOGLE_APP_PASSWORD || "",
+	aiApiKey: process.env.AI_API_KEY as string
 };

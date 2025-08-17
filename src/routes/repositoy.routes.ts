@@ -10,6 +10,10 @@ const repoController = Container.get(RepositoryController);
 
 repoRoutes.use(authMiddleware);
 
+repoRoutes.post("/user/repositories/:name", (req: Request, res: Response) => {
+	repoController.generateReadme(req, res);
+});
+
 repoRoutes.get("/user/repositories", (req: Request, res: Response) => {
 	repoController.getRepo(req, res);
 });

@@ -21,7 +21,7 @@ export class ProfileController {
 			const user = await this._profileService.getMe(userEmail.email);
 
 			successResponse(res, "Success Get Profile User", user, 200);
-		} catch (error) {
+		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {});
 		}
 	}
@@ -51,7 +51,7 @@ export class ProfileController {
 			} else {
 				successResponse(res, "Success delete Profile User", {}, 202);
 			}
-		} catch (error) {
+		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {});
 		}
 	}
@@ -88,7 +88,7 @@ export class ProfileController {
 				});
 				successResponse(res, "Success update profile User", {}, 202);
 			}
-		} catch (error) {
+		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {});
 		}
 	}
@@ -128,7 +128,7 @@ export class ProfileController {
 				{},
 				202,
 			);
-		} catch (error) {
+		} catch (_error) {
 			return errorResponse(res, "Internal Server Error", {});
 		}
 	}
@@ -165,7 +165,7 @@ export class ProfileController {
 			} else {
 				return successResponse(res, "Success Get Status Connection", result);
 			}
-		} catch (error) {
+		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {});
 		}
 	}

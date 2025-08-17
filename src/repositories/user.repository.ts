@@ -41,16 +41,16 @@ export class UserRepository {
 		const user = await db.select().from(users).where(eq(users.github_id, id));
 		return user[0]
 			? new User(
-					user[0]?.id,
-					user[0]?.name,
-					user[0]?.email,
-					user[0]?.username,
-					user[0]?.profile_picture,
-					user[0]?.github_id,
-					user[0]?.password,
-					user[0].accessToken,
-					user[0].coin,
-				)
+				user[0]?.id,
+				user[0]?.name,
+				user[0]?.email,
+				user[0]?.username,
+				user[0]?.profile_picture,
+				user[0]?.github_id,
+				user[0]?.password,
+				user[0].accessToken,
+				user[0].coin,
+			)
 			: null;
 	}
 
@@ -69,16 +69,16 @@ export class UserRepository {
 			.where(eq(users.email, email));
 		return user[0]
 			? new User(
-					undefined,
-					user[0]?.name,
-					user[0]?.email,
-					user[0]?.username,
-					user[0]?.profile_picture,
-					user[0]?.github_id,
-					user[0].password,
-					undefined,
-					user[0].coin,
-				)
+				undefined,
+				user[0]?.name,
+				user[0]?.email,
+				user[0]?.username,
+				user[0]?.profile_picture,
+				user[0]?.github_id,
+				user[0].password,
+				undefined,
+				user[0].coin,
+			)
 			: null;
 	}
 
@@ -86,16 +86,16 @@ export class UserRepository {
 		const user = await db.select().from(users).where(eq(users.id, id));
 		return user[0]
 			? new User(
-					user[0].id,
-					user[0].name,
-					user[0].email,
-					user[0].username,
-					user[0].profile_picture,
-					user[0].github_id,
-					user[0].password,
-					user[0].accessToken,
-					user[0].coin,
-				)
+				user[0].id,
+				user[0].name,
+				user[0].email,
+				user[0].username,
+				user[0].profile_picture,
+				user[0].github_id,
+				user[0].password,
+				user[0].accessToken,
+				user[0].coin,
+			)
 			: null;
 	}
 
@@ -131,6 +131,16 @@ export class UserRepository {
 					password,
 				})
 				.where(eq(users.username, username));
+		} catch (error) {
+			return error;
+		}
+	}
+
+	async updateCoin(coin: number, username: string) {
+		try {
+			await db.update(users).set({
+				coin
+			}).where(eq(users.username, username));
 		} catch (error) {
 			return error;
 		}

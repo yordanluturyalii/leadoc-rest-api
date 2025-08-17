@@ -13,13 +13,14 @@ export class RepositoryController {
 	async getRepo(req: Request, res: Response) {
 		try {
 			const user = req.user as any;
+			logger.info("User From Repository Controller: %o", user);
 
 			const accessToken = await this.repoService.getAccessToken(
 				user?.email,
 				user?.id,
 			);
 
-			if (typeof accessToken as unknown)
+			if (typeof accessToken !== "string")
 				errorResponse(res, "Mising Access Token", {}, 401);
 
 			if (!user?.id) errorResponse(res, "Github Connection Required", {}, 400);
@@ -29,9 +30,33 @@ export class RepositoryController {
 				user?.id,
 			);
 
+			logger.info("Data Repository: %o", repositories);
 			successResponse(res, "Success Get Repository", repositories);
 		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {}, 500);
+		}
+	}
+
+	async generateReadme(req: Request, res: Response) {
+		try {
+			const user = req.user as any;
+			if (!user) errorResponse(res, "Unauthorized", {}, 401);
+			const { name } = req.params;
+			const section = req.body.section;
+
+			const repository = await this.repoService.generateReadme(
+				section,
+				name as string,
+				user?.id as string
+			);
+
+			if (repository instanceof Error) errorResponse(res, repository.message, {}, 422);
+
+			successResponse(res, "Succes Generate Readme", {
+				content: repository
+			}, 201);
+		} catch (error) {
+			errorResponse(res, "Internal Server Error", error);
 		}
 	}
 }

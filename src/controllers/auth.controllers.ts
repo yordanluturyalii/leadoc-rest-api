@@ -77,7 +77,7 @@ export class AuthController {
 				maxAge: 24 * 60 * 60 * 1000,
 			});
 			successResponse(res, "Success Create Account", user, 201);
-		} catch (error) {
+		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {});
 		}
 	}
@@ -110,7 +110,7 @@ export class AuthController {
 			});
 
 			successResponse(res, "Success Login", user, 200);
-		} catch (error) {
+		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {});
 		}
 	}
@@ -131,7 +131,7 @@ export class AuthController {
 
 				successResponse(res, "Success Logout", {}, 200);
 			}
-		} catch (error) {
+		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {}, 500);
 		}
 	}
@@ -158,13 +158,13 @@ export class AuthController {
 				successResponse(
 					res,
 					"Verification email sent successfully",
-					{token: response.token},
+					{ token: response.token },
 					200,
 				);
 			} else {
 				errorResponse(res, "Failed to send verification email", {}, 400);
 			}
-		} catch (error) {
+		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {});
 		}
 	}
@@ -199,7 +199,7 @@ export class AuthController {
 			} else {
 				successResponse(res, "Password reset successfully", {}, 200);
 			}
-		} catch (error) {
+		} catch (_error) {
 			errorResponse(res, "Internal Server Error", {});
 		}
 	}

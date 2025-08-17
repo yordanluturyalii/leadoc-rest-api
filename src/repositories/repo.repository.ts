@@ -25,14 +25,14 @@ export class RepoRepository {
 			.returning();
 		return repo[0]
 			? new Repository(
-					repo[0].id,
-					repo[0].name,
-					repo[0].visibility,
-					repo[0].user_id,
-					repo[0].is_have_readme,
-					repo[0].created_at,
-					repo[0].updated_at,
-				)
+				repo[0].id,
+				repo[0].name,
+				repo[0].visibility,
+				repo[0].user_id,
+				repo[0].is_have_readme,
+				repo[0].created_at,
+				repo[0].updated_at,
+			)
 			: null;
 	}
 
@@ -54,5 +54,18 @@ export class RepoRepository {
 			.select()
 			.from(repositories)
 			.where(eq(repositories.user_id, id));
+	}
+
+	async updateByName(name: string, data: Partial<typeof repositories.$inferInsert>) {
+		const repo = await db.update(repositories).set(data).where(eq(repositories.name, name)).returning({ id: repositories.id });
+		return repo[0];
+	}
+
+	async findByName(name: string) {
+		try {
+			return await db.select().from(repositories).where(eq(repositories.name, name));
+		} catch (error) {
+			return error;
+		}
 	}
 }
