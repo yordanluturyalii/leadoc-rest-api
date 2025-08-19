@@ -1,15 +1,9 @@
-# leadoc-rest-api
+# Leadoc Rest API
 
-To install dependencies:
+## 🐳 Running With Docker Compose
 
+1. Run Command
 ```bash
-bun install
+    docker compose up -d
 ```
 
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.2.14. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
