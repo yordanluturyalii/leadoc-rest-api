@@ -5,6 +5,8 @@
 	"author": "yordanluturyalii",
 	"scripts": {
 		"dev": "bun --watch ./src/index",
+		"build": "bunx tsc",
+		"start": "bun run ./dist/src",
 		"test": "vitest"
 	},
 	"private": true,
