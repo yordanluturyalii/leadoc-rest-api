@@ -11,6 +11,7 @@ import { config } from "./config/config";
 import authRoutes from "./routes/auth.routes";
 import profileRoutes from "./routes/profile.routes";
 import repoRoutes from "./routes/repositoy.routes";
+import orderRoutes from "./routes/order.route";
 
 const app = express();
 
@@ -32,7 +33,7 @@ app.use(
 app.use(passport.session());
 app.use(cookieParser());
 
-app.use("/api", [authRoutes, profileRoutes, repoRoutes]);
+app.use("/api", [authRoutes, profileRoutes, repoRoutes, orderRoutes]);
 
 app.use(errorHandler);
 export { app };

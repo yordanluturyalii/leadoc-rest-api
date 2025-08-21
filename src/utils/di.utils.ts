@@ -7,6 +7,8 @@ import { RepositoryServices } from "../services/repository.services";
 import { ReadmeServices } from "../services/readme.services";
 import { AIServices } from "../services/ai.services";
 import { DetailRepoRepositories } from "../repositories/detail-repo.repository";
+import { OrderRepository } from "../repositories/order.repository";
+import { OrderServices } from "../services/order.services";
 
 export default function setupDI() {
 	Container.set("UserRepository", new UserRepository());
@@ -33,4 +35,10 @@ export default function setupDI() {
 			Container.get("DetailRepoRepository")
 		),
 	);
+
+	Container.set("OrderRepository", new OrderRepository());
+	Container.set("OrderServices", new OrderServices(
+		Container.get("UserRepository"),
+		Container.get("OrderRepository")
+	));
 }

@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
 	boolean,
+	date,
 	integer,
 	pgEnum,
 	pgTable,
@@ -11,6 +12,8 @@ import {
 } from "drizzle-orm/pg-core";
 
 export const visibilityEnum = pgEnum("visibility", ["PRIVATE", "PUBLIC"]);
+export const packageEnum = pgEnum("package_name", ["MINI", "MEDIUM", "MEGA"]);
+export const paymentStatusEnum = pgEnum("status", ["pending", "success", "rejected", "failed"]);
 
 export const users = pgTable("users", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
@@ -44,8 +47,21 @@ export const detailRepositories = pgTable("detail_repositories", {
 	updated_at: timestamp(),
 });
 
+export const orders = pgTable("orders", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	invoice: varchar().notNull(),
+	package_name: packageEnum().notNull(),
+	date: date().defaultNow(),
+	amount: integer().notNull(),
+	user_id: uuid().notNull(),
+	status: paymentStatusEnum().default("pending").notNull(),
+	created_at: timestamp().defaultNow(),
+	updated_at: timestamp(),
+})
+	;
 export const usersRelations = relations(users, ({ many }) => ({
 	repositories: many(repositories),
+	orders: many(orders)
 }));
 
 export const repositoriesRelations = relations(repositories, ({ one, many }) => ({
@@ -62,3 +78,10 @@ export const detailRepositoriesRelations = relations(detailRepositories, ({ one 
 		references: [repositories.id]
 	})
 }))
+
+export const ordersRelations = relations(orders, ({ one }) => ({
+	users: one(users, {
+		fields: [orders.user_id],
+		references: [users.id]
+	})
+}));
