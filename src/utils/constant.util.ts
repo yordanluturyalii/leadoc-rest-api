@@ -22,3 +22,10 @@ export interface RepoAnalysis {
 	environment: string[];
 	apiEndpoints: string[];
 }
+
+
+export const prices = {
+	MINI: 5,
+	MEDIUM: 15,
+	MEGA: 50
+}
