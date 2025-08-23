@@ -34,9 +34,10 @@ export class AuthController {
 				secure: config.appEnvironment === "production",
 				sameSite: "lax",
 				maxAge: 24 * 60 * 60 * 1000,
+				domain: 'localhost',
 			});
 
-			successResponse(res, "success", {});
+			res.redirect(config.frontendUrl);
 		} catch (error) {
 			logger.info(error);
 		}
