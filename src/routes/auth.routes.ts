@@ -26,6 +26,10 @@ authRoutes.get(
 	},
 );
 
+authRoutes.post("/auth/verify", (req: Request, res: Response) => {
+	authController.verify(req, res);
+});
+
 authRoutes.post(
 	"/auth/register",
 	registerValidator,

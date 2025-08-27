@@ -175,12 +175,44 @@ export class RepositoryServices {
 
 			const cleanResult = result.content.toString().replace(/\\n/g, '\n');
 
-			const updatedRepo = await this.repoRepository.updateByName(repo, {updated_at: new Date()});
+			const updatedRepo = await this.repoRepository.updateByName(repo, { updated_at: new Date() });
 			logger.info("From Repository Service - Updated Repo: %o", updatedRepo?.id);
 
 			await this.detailRepoRepository.save(updatedRepo?.id as string, cleanResult);
 
 			return cleanResult;
+		} catch (error) {
+			return error;
+		}
+	}
+
+	async pushReadme(repo: string, githubId: string, content: string) {
+		try {
+			const user = await this.userRepository.findByGithubId(githubId);
+			if (!user) throw new Error("Unauthorized");
+			const githubUsername = user?.username as string;
+
+			const octokit = new Octokit({
+				auth: user.accessToken,
+			});
+
+			const { data: oldReadme } = await octokit.rest.repos.getContent({
+				owner: githubUsername,
+				repo: repo,
+				path: 'README.md'
+			});
+			const sha = oldReadme.sha;
+
+			await octokit.rest.repos.createOrUpdateFileContents({
+				owner: githubUsername,
+				repo: repo,
+				path: 'README.md',
+				message: 'Updated Readme Generated From Leadoc AI', 
+				content: Buffer.from(content).toString('base64'),
+				sha: sha
+			});
+
+			return true;
 		} catch (error) {
 			return error;
 		}

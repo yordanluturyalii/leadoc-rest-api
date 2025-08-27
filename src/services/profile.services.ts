@@ -13,9 +13,12 @@ export class ProfileServices {
 		@Inject("UserRepository") public userRepository: UserRepository,
 	) {}
 
-	async getMe(email: string) {
+	async getMe(email: string, username?: string) {
 		try {
-			const user = await this.userRepository.findByEmail(email);
+			let user = await this.userRepository.findByEmail(email);
+			if (!user) {
+				user = await this.userRepository.findByUsername(username as string);
+			}
 
 			return {
 				user: {

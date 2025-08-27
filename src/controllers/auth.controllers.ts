@@ -37,7 +37,7 @@ export class AuthController {
 				domain: 'localhost',
 			});
 
-			res.redirect(config.frontendUrl);
+			res.redirect(`${config.frontendUrl}/dashboard`);
 		} catch (error) {
 			logger.info(error);
 		}
@@ -201,6 +201,21 @@ export class AuthController {
 				successResponse(res, "Password reset successfully", {}, 200);
 			}
 		} catch (_error) {
+			errorResponse(res, "Internal Server Error", {});
+		}
+	}
+
+	async verify(req: Request, res: Response) {
+		try {
+			const token = req.cookies.token;
+			if (!token) errorResponse(res, "No Token Provide", {}, 401);
+
+			const user = this._authService.verify(token);
+
+			successResponse(res, "Token Valid", {
+				user: user
+			});
+		} catch (error) {
 			errorResponse(res, "Internal Server Error", {});
 		}
 	}

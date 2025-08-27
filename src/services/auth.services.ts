@@ -12,7 +12,7 @@ import { logger } from "../utils/logger.utils";
 export class AuthServices {
 	constructor(
 		@Inject("UserRepository") public userRepository: UserRepository,
-	) {}
+	) { }
 	async authorize(
 		githubId: string,
 		accessToken: string,
@@ -147,7 +147,7 @@ export class AuthServices {
 
 			const token = String(
 				Math.random().toString(36).substring(2, 15) +
-					Math.random().toString(36).substring(2, 15),
+				Math.random().toString(36).substring(2, 15),
 			);
 
 			await redisClient.setEx(`reset-password:${email}`, 60 * 5, token);
@@ -195,6 +195,15 @@ export class AuthServices {
 		} catch (error) {
 			logger.error("Error: %o", error);
 			throw error;
+		}
+	}
+
+	verify(token: string) {
+		try {
+			const decoded = jwt.verify(token, config.jwtSecret);
+			return decoded;
+		} catch (error) {
+			return error;
 		}
 	}
 }
