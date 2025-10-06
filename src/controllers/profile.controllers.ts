@@ -17,8 +17,8 @@ export class ProfileController {
 
 	async getMe(req: Request, res: Response) {
 		try {
-			const userEmail = (req as any).user;
-			const user = await this._profileService.getMe(userEmail.email);
+			const data = (req as any).user;
+			const user = await this._profileService.getMe(data.email, data.username);
 
 			successResponse(res, "Success Get Profile User", user, 200);
 		} catch (_error) {

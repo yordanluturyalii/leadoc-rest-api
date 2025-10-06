@@ -63,7 +63,7 @@ export class ReadmeServices {
                 apiEndpoints,
             };
         } catch (error) {
-            console.error('Error analyzing repository:', error);
+            logger.error('Error analyzing repository:', error);
             throw new Error(`Failed to analyze repository: ${owner}/${repo}`);
         }
     }

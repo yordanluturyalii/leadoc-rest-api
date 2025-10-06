@@ -10,7 +10,6 @@ export default function authMiddleware(
 	next: NextFunction,
 ) {
 	const token = req?.cookies?.token;
-	logger.info("User: %o", token);
 
 	if (!token) return errorResponse(res, "Unauthorized", {}, 401);
 

@@ -18,4 +18,8 @@ repoRoutes.get("/user/repositories", (req: Request, res: Response) => {
 	repoController.getRepo(req, res);
 });
 
+repoRoutes.post("/user/repositories/:name/push", (req: Request, res: Response) => {
+	repoController.pushReadme(req, res);
+});
+
 export default repoRoutes;

@@ -8,12 +8,11 @@ import { errorResponse, successResponse } from "../utils/response.utils";
 export class RepositoryController {
 	constructor(
 		@Inject("RepositoryService") private repoService: RepositoryServices,
-	) {}
+	) { }
 
 	async getRepo(req: Request, res: Response) {
 		try {
 			const user = req.user as any;
-			logger.info("User From Repository Controller: %o", user);
 
 			const accessToken = await this.repoService.getAccessToken(
 				user?.email,
@@ -50,13 +49,36 @@ export class RepositoryController {
 				user?.id as string
 			);
 
-			if (repository instanceof Error) errorResponse(res, repository.message, {}, 422);
+			if (repository instanceof Error) errorResponse(res, repository.message, {
+				stack: repository.stack,
+				cause: repository.cause
+			}, 422);
 
 			successResponse(res, "Succes Generate Readme", {
 				content: repository
 			}, 201);
 		} catch (error) {
 			errorResponse(res, "Internal Server Error", error);
+		}
+	}
+
+	async pushReadme(req: Request, res: Response) {
+		try {
+			const user = req.user as any;
+			const { name } = req.params;
+			const content = req.body.content;
+
+			if (!user?.id) errorResponse(res, "Github Connection Required", {}, 400);
+
+			const push = await this.repoService.pushReadme(name as string, user?.id, content);
+			if (push instanceof Error) {
+				logger.info("Push: %o", push);
+				errorResponse(res, "Failed To Push Readme", push.message, 400)
+			};
+
+			return successResponse(res, "Success Push Readme", {}, 200);
+		} catch (error) {
+			errorResponse(res, "Internal Server Error", {});
 		}
 	}
 }
